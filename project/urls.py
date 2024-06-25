@@ -17,6 +17,7 @@ urlpatterns = [
     path("cover/", TemplateView.as_view(template_name="cover.html"), name="cover"),
     path("google/", TemplateView.as_view(template_name="google.html"), name="google"),
     path("", include("apps.gizmo.urls.appurls"), name="gizmo"),
+    path("attendance/",include("attendance.urls")),
 ]
 
 handler400 = "project.errors.error_badrequest"
