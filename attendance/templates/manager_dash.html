@@ -1,3 +1,237 @@
 {% extends '_blank.html' %}
 {% block qux_page_content %}
+<div>
+    <div class="h3">Tuesday, 25/06/2024</div>
+    <div class="row">
+        <div class="col-8" id="left">
+            <div class="row py-3" id="top">
+                <div class="col">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-primary">Present</div>
+                            <div class="fs-2">12</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-danger">Absent</div>
+                            <div class="fs-2">03</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-success">On-time</div>
+                            <div class="fs-2">10</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="text-warning">Late</div>
+                            <div class="fs-2">02</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row py-3" id="middle">
+                <div class="col">
+                <div class="card">
+                    <div class="card-header">Leave Requests</div>
+                    <div class="card-body g-0">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td>#</td>
+                            <td>Employee Name</td>
+                            <td>Duration</td>
+                            <td>Remarks</td>
+                            <td>Actions</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Vinay Kumar</td>
+                            <td>1 Jul 2024 to 4 Jul 2024</td>
+                            <td>Personal Reasons</td>
+                            <td>
+                                <button class="btn btn-outline-success me-2">Accept</button>
+                                <button class="btn btn-outline-danger">Reject</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Mayur Gund</td>
+                            <td>3 Jul 2024 to 5 Jul 2024</td>
+                            <td>Personal Reasons</td>
+                            <td>
+                                <button class="btn btn-outline-success me-2">Accept</button>
+                                <button class="btn btn-outline-danger">Reject</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">Late Today</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2"><i class="bi bi-person-circle fs-1"></i></div>
+                                <div class="col-10 g-0">
+                                    <div class="fs-5">Pushpendra Tripathi</div>
+                                    <div class="text-secondary fs-light">Sr. Developer</div>
+                                    <div class="text-secondary">Manager - Shumu Gupta</div>
+                                    <div class="text-danger">10:05 AM</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-2"><i class="bi bi-person-circle fs-1"></i></div>
+                                <div class="col-10 g-0">
+                                    <div class="fs-5">Lorem Ipsum</div>
+                                    <div class="text-secondary fs-light">Sr. Developer</div>
+                                    <div class="text-secondary">Manager - Shumu Gupta</div>
+                                    <div class="text-danger">10:10 AM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">On Leave</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-2"><i class="bi bi-person-circle fs-1"></i></div>
+                                <div class="col-10 g-0">
+                                    <div class="fs-5">Test Person</div>
+                                    <div class="text-secondary fs-light">Sr. Analyst</div>
+                                    <div class="text-secondary">Manager - Shumu Gupta</div>
+                                    <div class="text-dark"><i class="bi bi-calendar"></i> 20 Jun 2024 - 1 Jul 2024</div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-2"><i class="bi bi-person-circle fs-1"></i></div>
+                                <div class="col-10 g-0">
+                                    <div class="fs-5">Lorem Ipsum</div>
+                                    <div class="text-secondary fs-light">Sr. Developer</div>
+                                    <div class="text-secondary">Manager - Shumu Gupta</div>
+                                    <div class="text-dark"><i class="bi bi-calendar"></i> 20 Jun 2024 - 1 Jul 2024</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 py-3" id="right">
+            <div class="card">
+                <div class="card-header">Attendance</div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="bi bi-person-circle fs-2"></i>
+                        </div>
+                        <div class="col-10 gs-0">
+                            <div class="fs-5">Test Person</div>
+                            <div class="d-flex justify-content-between">
+                                <div><i class="bi bi-clock"></i> 10:00 AM</div>
+                                <div class="text-secondary">Moments Ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock qux_page_content %}
