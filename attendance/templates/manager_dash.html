@@ -41,7 +41,10 @@
             <div class="row py-3" id="middle">
                 <div class="col">
                 <div class="card">
-                    <div class="card-header">Leave Requests</div>
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="">Leave Requests</div>
+                        <div class=""><a href="{% url 'attendance:requests' %}" class="link-opacity-100-hover"><i class="bi bi-box-arrow-up-right"></i></a></div>
+                    </div>
                     <div class="card-body g-0">
                 <table class="table table-hover">
                     <thead>
@@ -58,7 +61,7 @@
                             <td>1</td>
                             <td>Vinay Kumar</td>
                             <td>1 Jul 2024 to 4 Jul 2024</td>
-                            <td>Personal Reasons</td>
+                            <td class="text-truncate">Personal Reasons</td>
                             <td>
                                 <button class="btn btn-outline-success me-2">Accept</button>
                                 <button class="btn btn-outline-danger">Reject</button>
