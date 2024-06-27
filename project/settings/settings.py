@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "qux.auth",
     "qux.token",
     "apps.gizmo",
-    "attendance.apps.AttendanceConfig"
+    "apps.attendance.apps.AttendanceConfig"
 ]
 
 MIDDLEWARE = [
