@@ -50,7 +50,7 @@ class Status(QuxModel):
     
     
     def __str__(self):
-        return self.status
+        return str(self.status)
 
 
 
