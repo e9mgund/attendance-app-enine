@@ -36,4 +36,5 @@ urlpatterns = [
         name="employee",
     ),
     path("logout/", views.LogoutView.as_view(), name="logout"),
+    path("markattendance/",views.MarkAttendanceView.as_view(),name="markAttendance"),
 ]

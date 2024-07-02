@@ -93,6 +93,10 @@
                                                 </td>
                                             </tr>
                                         {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="5" class="text-center">No Data Available</td>
+                                        </tr>
                                     {% endif %}
                                 </tbody>
                             </table>
@@ -169,7 +173,13 @@
         </div>
         <div class="col-lg-4 col-sm-12 py-3" id="right">
             <div class="card">
-                <div class="card-header">Attendance</div>
+                <div class="card-header">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-center align-self-center">Attendance</div>
+                        <a class="btn btn-sm btn-outline-dark"
+                           href="{% url 'apps.attendance:markAttendance' %}">Mark Attendance +</a>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-2">

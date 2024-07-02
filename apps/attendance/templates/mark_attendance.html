@@ -1,0 +1,174 @@
+{% extends 'base.html' %}
+{% block title %}<title>Attendance</title>{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="table-responsive">
+            <div class="d-flex justify-content-between py-3">
+                <div class="fs-2">Attendance</div>
+                <div>
+                    <button type="button"
+                            class="btn btn-outline-success"
+                            onclick="submitAttendance()">Submit</button>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <div class="d-flex">
+                    <div class="dropdown me-2">
+                        <button class="btn btn-outline-dark dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown"
+                                id="statusDropdown"
+                                aria-expanded="false">Status</button>
+                        <ul class="dropdown-menu" aria-labelledby="statusDropdown">
+                            <li>
+                                <a class="dropdown-item" value="value" href="#" data-status="present">Present</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" value="value" href="#" data-status="late">Late</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" value="value" href="#" data-status="sick">Sick</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" value="value" href="#" data-status="vacation">Vacation</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" value="value" href="#" data-status="travelling">Travelling</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <input type="date" class="form-control" id="attendanceDate" value="{{date}}" onchange="pastRecords(this.value)">
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="selectAllCheckbox" onclick="toggle(this)">
+                        </th>
+                        <th>Name</th>
+                        <th>Remark</th>
+                        <th>Current Status</th>
+                    </tr>
+                </thead>
+                {% if records %}
+                    <tbody>
+                        {% for record in records %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="record-checkbox">
+                                </td>
+                                <td>{{ record.employee }}</td>
+                                <td>
+                                    <input type="text" class="form-control" placeholder="{{ record.remark }}">
+                                </td>
+                                <td>{{ record.status }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% else %}
+                    <tbody>
+                        {% for employee in employees %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" class="record-checkbox">
+                            </td>
+                            <td>{{employee}}</td>
+                            <td>
+                                <input type="text" class="form-control">
+                            </td>
+                            <td>Pending</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function () {
+    $('.dropdown-menu a').on('click', function () {
+        var selectedText = $(this).text();
+        var selectedStatus = $(this).data('status');
+
+        // Set the selected status as the button text
+        $(this).closest('.dropdown').find('.dropdown-toggle').html(selectedText);
+
+        // Store the selected status in a data attribute of the dropdown button
+        $(this).closest('.dropdown').find('.dropdown-toggle').data('selected-status', selectedStatus);
+
+        // Add 'active' class to the clicked item for visual feedback
+        $(this).closest('.dropdown-menu').find('.dropdown-item').removeClass('active');
+        $(this).addClass('active');
+    });
+});
+
+        function toggle(source) {
+            var checkboxes = document.getElementsByClassName('record-checkbox');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+        };
+        // function pastRecords(value) {
+        //         console.log("value",value);
+        //         var date = new Date(value);
+        //         console.log("date",date)
+        //         $.ajax({
+        //         type: 'GET',
+        //         url: '{% url "apps.attendance:markAttendance" %}',  // Replace with your Django view URL
+        //         data: {
+        //             'date':date
+        //         },
+        //         success: function (response) {
+        //             // Handle success
+        //             console.log('Data submitted successfully');
+        //         },
+        //         error: function (error) {
+        //             // Handle errors
+        //             console.error('Error submitting data:', error);
+        //         }
+        //     });
+        //     };
+
+        function submitAttendance() {
+            var selectedStatus = $('.dropdown-menu a.active').data('status');
+            var attendanceDate = $('#attendanceDate').val();
+            var selectedRecords = [];
+            console.log("status",selectedStatus);
+
+            $('.record-checkbox:checked').each(function () {
+                var name = $(this).closest('tr').find('td:nth-child(2)').text().trim();
+                var remark = $(this).closest('tr').find('td:nth-child(3) input').val().trim();
+                selectedRecords.push({
+                    user: name,
+                    status: selectedStatus,
+                    remark: remark
+                });
+            });
+
+            // AJAX call
+            $.ajax({
+                type: 'POST',
+                url: '{% url "apps.attendance:markAttendance" %}',  // Replace with your Django view URL
+                data: {
+                    'attendance_date': attendanceDate,
+                    'records': JSON.stringify(selectedRecords),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (response) {
+                    // Handle success
+                    console.log('Data submitted successfully');
+                },
+                error: function (error) {
+                    // Handle errors
+                    console.error('Error submitting data:', error);
+                }
+            });
+        }
+    </script>
+{% endblock %}
