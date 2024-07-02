@@ -10,7 +10,7 @@
                         <div class="card text-center mb-2">
                             <div class="card-body">
                                 <div class="text-primary">Present</div>
-                                <div class="fs-2">12</div>
+                                <div class="fs-2">{{ present }}</div>
                             </div>
                         </div>
                     </div>
@@ -18,23 +18,23 @@
                         <div class="card text-center mb-2">
                             <div class="card-body">
                                 <div class="text-danger">Absent</div>
-                                <div class="fs-2">03</div>
+                                <div class="fs-2">{{ absent }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-12">
                         <div class="card text-center mb-2">
                             <div class="card-body">
-                                <div class="text-success">On-time</div>
-                                <div class="fs-2">10</div>
+                                <div class="text-success">Late</div>
+                                <div class="fs-2">{{ late }}</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-12">
                         <div class="card text-center mb-2">
                             <div class="card-body">
-                                <div class="text-warning">Late</div>
-                                <div class="fs-2">02</div>
+                                <div class="text-warning">Sick</div>
+                                <div class="fs-2">{{ sick }}</div>
                             </div>
                         </div>
                     </div>
@@ -175,131 +175,24 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
-                        <div class="text-center align-self-center">Attendance</div>
+                        <div class="text-center align-self-center">Employees</div>
                         <a class="btn btn-sm btn-outline-dark"
                            href="{% url 'apps.attendance:markAttendance' %}">Mark Attendance +</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
+                    {% for employee in all_employees %}
+                        <div class="row">
+                            <div class="col">
+                                <div class="fs-5">{{ employee }}</div>
+                                <div class="d-flex justify-content-between">
+                                    <div>Leaves Remaining</div>
+                                    <div class="text-dark">{{ employee.earned_leave }}</div>
                                 </div>
-                                <div class="text-secondary">Moments Ago</div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-2">
-                            <i class="bi bi-person-circle fs-2"></i>
-                        </div>
-                        <div class="col-10 gs-0">
-                            <div class="fs-5">Test Person</div>
-                            <div class="d-flex justify-content-between">
-                                <div>
-                                    <i class="bi bi-clock"></i> 10:00 AM
-                                </div>
-                                <div class="text-secondary">Moments Ago</div>
-                            </div>
-                        </div>
-                    </div>
+                        <hr>
+                    {% endfor %}
                 </div>
             </div>
         </div>

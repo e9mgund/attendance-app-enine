@@ -20,24 +20,41 @@ import json
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = "manager_dash.html"
+    template_name = "dashboard.html"
     login_url = "/login/"
 
     def get_context_data(self):
         today = datetime.datetime.now()
-        members = list(Employee.objects.filter(manager=self.request.user).values('user_id'))
-        if not members:
+        if self.request.user.is_superuser:
             pass
-        requests = []
-        for i in members:
-            for j in list(LeaveRequest.objects.values()) :
-                if i['user_id'] == j['employee_id'] :
-                    j['name'] = str(User.objects.get(pk=j['employee_id']))
-                    requests.append(j)
+        else:
+            total_employees = Employee.objects.filter(manager=self.request.user)
+            p=a=s=l=0
+            employees = [i for i in Attendance.objects.filter(fordate=today) if Employee.objects.get(user=i.employee).manager == self.request.user]
+            for employee in employees:
+                if str(employee.status) == "Present":
+                    p += 1
+                elif str(employee.status) == "Late" :
+                    l += 1
+                    p += 1
+                elif str(employee.status) == "Sick":
+                    s += 1
+                else:
+                    a += 1
+            # print("b",Employee.objects.get(user=b[0].employee).manager)
+            members = list(Employee.objects.filter(manager=self.request.user).values('user_id'))
+            if not members:
+                pass
+            requests = []
+            for i in members:
+                for j in list(LeaveRequest.objects.values()) :
+                    if i['user_id'] == j['employee_id'] :
+                        j['name'] = str(User.objects.get(pk=j['employee_id']))
+                        requests.append(j)
         # print("-----------------")
         # print(requests)
         # print("-----------------")
-        return {"weekday":today.strftime("%A"),"date":today.strftime("%d/%m/%Y"),"requests":requests}
+        return {"weekday":today.strftime("%A"),"date":today.strftime("%d/%m/%Y"),"requests":requests[::-1],"present":p,"absent":a,"late":l,"sick":s,"all_employees":total_employees}
 
 class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
     template_name = "mark_attendance.html"
@@ -48,15 +65,14 @@ class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
         return {"date":datetime.datetime.strftime(datetime.datetime.today(),"%Y-%m-%d"),"employees":employees}
 
     def post(self,request):
+        '''
+        Method to post data into database
+        '''
         attendance_date,records = request.POST.get("attendance_date"),json.loads(request.POST.get("records"))
-        # print(attendance_date,records)
         for record in records:
-            # print(type(User.objects.get(username=record['user'])))
             remark = record['remark'] if record['remark'] != "" else str(record['status'])
             user = User.objects.get(username=record['user'])
-            # print(record['status'].capitalize())
             status = Status.objects.get(status=record['status'].capitalize())
-            # print(type(status))
             update_record,created = Attendance.objects.update_or_create(fordate=attendance_date,employee=user,status=status,remarks=remark)
             # update_record.save()
             print("anything",update_record)
