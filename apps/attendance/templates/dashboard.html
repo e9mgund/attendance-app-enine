@@ -18,7 +18,7 @@
                         <div class="card text-center mb-2">
                             <div class="card-body">
                                 <div class="text-danger">Absent</div>
-                                <div class="fs-2">{{ absent }}</div>
+                                <div class="fs-2">{{ abs }}</div>
                             </div>
                         </div>
                     </div>
@@ -108,64 +108,38 @@
                 <div class="col-lg-6 col-sm-12 mb-4">
                     <div class="card">
                         <div class="card-header">Late Today</div>
+                        {% if late_comers %}
                         <div class="card-body">
+                            {% for employee in late_comers %}
                             <div class="row">
-                                <div class="col-2">
-                                    <i class="bi bi-person-circle fs-1"></i>
-                                </div>
-                                <div class="col-10 g-0">
-                                    <div class="fs-5">Pushpendra Tripathi</div>
-                                    <div class="text-secondary fs-light">Sr. Developer</div>
-                                    <div class="text-secondary">Manager - Shumu Gupta</div>
-                                    <div class="text-danger">10:05 AM</div>
-                                </div>
+                                <div class="fs-5">{{employee.employee}}</div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-2">
-                                    <i class="bi bi-person-circle fs-1"></i>
-                                </div>
-                                <div class="col-10 g-0">
-                                    <div class="fs-5">Lorem Ipsum</div>
-                                    <div class="text-secondary fs-light">Sr. Developer</div>
-                                    <div class="text-secondary">Manager - Shumu Gupta</div>
-                                    <div class="text-danger">10:10 AM</div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
+                        {% else %}
+                        <div class="text-center">No data Available</div>
+                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
                     <div class="card">
-                        <div class="card-header">On Leave</div>
+                        <div class="card-header">Absent</div>
                         <div class="card-body">
+                            {% if absent %}
+                            {% for employee in absent %}
                             <div class="row">
-                                <div class="col-2">
-                                    <i class="bi bi-person-circle fs-1"></i>
-                                </div>
-                                <div class="col-10 g-0">
-                                    <div class="fs-5">Test Person</div>
-                                    <div class="text-secondary fs-light">Sr. Analyst</div>
-                                    <div class="text-secondary">Manager - Shumu Gupta</div>
-                                    <div class="text-dark">
-                                        <i class="bi bi-calendar"></i> 20 Jun 2024 - 1 Jul 2024
-                                    </div>
+                                <div>{{employee.employee}}</div>
+                                <div class="d-flex justify-content-between">
+                                    <div>Reason</div>
+                                    <div>{{employee.status}}</div>
                                 </div>
                             </div>
                             <hr>
-                            <div class="row">
-                                <div class="col-2">
-                                    <i class="bi bi-person-circle fs-1"></i>
-                                </div>
-                                <div class="col-10 g-0">
-                                    <div class="fs-5">Lorem Ipsum</div>
-                                    <div class="text-secondary fs-light">Sr. Developer</div>
-                                    <div class="text-secondary">Manager - Shumu Gupta</div>
-                                    <div class="text-dark">
-                                        <i class="bi bi-calendar"></i> 20 Jun 2024 - 1 Jul 2024
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="text-center">No data Available</div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

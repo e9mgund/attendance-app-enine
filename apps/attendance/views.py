@@ -3,7 +3,6 @@ from urllib import request
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, ListView
-import pytz
 from tomlkit import date
 from project.settings.settings import LOGOUT_URL
 from .models import Employee, LeaveRequest , Attendance , Status
@@ -13,7 +12,6 @@ from django.contrib.auth import login, authenticate, logout
 import datetime , calendar
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
-from django.conf import settings
 import json
 
 # Create your views here.
@@ -25,22 +23,49 @@ class DashboardView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self):
         today = datetime.datetime.now()
+        late_comers = []
+        absent = []
         if self.request.user.is_superuser:
-            pass
+            total_employees = Employee.objects.all()
+            p=a=s=l=0
+            for employee in Attendance.objects.filter(fordate=today) :
+                if str(employee.status) == "Present":
+                    p += 1
+                elif str(employee.status) == "Late" :
+                    late_comers.append(employee)
+                    l += 1
+                elif str(employee.status) == "Sick":
+                    s += 1
+                    absent.append(employee)
+                else:
+                    a += 1
+                    absent.append(employee)
+            members = list(Employee.objects.values('user_id'))
+            if not members:
+                pass
+            requests = []
+            for i in members:
+                for j in list(LeaveRequest.objects.values()) :
+                    if i['user_id'] == j['employee_id'] :
+                        j['name'] = str(User.objects.get(pk=j['employee_id']))
+                        requests.append(j)
         else:
             total_employees = Employee.objects.filter(manager=self.request.user)
             p=a=s=l=0
+            # For present day
             employees = [i for i in Attendance.objects.filter(fordate=today) if Employee.objects.get(user=i.employee).manager == self.request.user]
             for employee in employees:
                 if str(employee.status) == "Present":
                     p += 1
                 elif str(employee.status) == "Late" :
+                    late_comers.append(employee)
                     l += 1
-                    p += 1
                 elif str(employee.status) == "Sick":
                     s += 1
+                    absent.append(employee)
                 else:
                     a += 1
+                    absent.append(employee)
             # print("b",Employee.objects.get(user=b[0].employee).manager)
             members = list(Employee.objects.filter(manager=self.request.user).values('user_id'))
             if not members:
@@ -51,10 +76,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                     if i['user_id'] == j['employee_id'] :
                         j['name'] = str(User.objects.get(pk=j['employee_id']))
                         requests.append(j)
-        # print("-----------------")
-        # print(requests)
-        # print("-----------------")
-        return {"weekday":today.strftime("%A"),"date":today.strftime("%d/%m/%Y"),"requests":requests[::-1],"present":p,"absent":a,"late":l,"sick":s,"all_employees":total_employees}
+        return {"weekday":today.strftime("%A"),"date":today.strftime("%d/%m/%Y"),"requests":requests[::-1],"present":p,"abs":a,"late":l,"sick":s,"all_employees":total_employees,"late_comers":late_comers,"absent":absent,"is_manager":self.request.user.is_staff,"is_admin":self.request.user.is_superuser}
+
 
 class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
     template_name = "mark_attendance.html"
@@ -77,6 +100,7 @@ class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
             # update_record.save()
             print("anything",update_record)
         return redirect(request.path_info)
+
 
 class OverviewView(LoginRequiredMixin,TemplateView) :
     template_name = "manager_overview.html"

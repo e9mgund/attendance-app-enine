@@ -40,14 +40,18 @@
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="#">Home</a>
+                                    <a class="nav-link active" aria-current="page" href="{% url 'apps.attendance:home' %}">Home</a>
                                 </li>
+                                {% if is_manager %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Manager Dashboard</a>
+                                    <a class="nav-link" href="{% url 'apps.attendance:home' %}">Manager Dashboard</a>
                                 </li>
+                                {% endif %}
+                                {% if is_admin %}
                                 <li class="nav-item">
-                                    <a class="nav-link" href="#">Admin Dashboard</a>
+                                    <a class="nav-link" href="{% url 'apps.attendance:home' %}">Admin Dashboard</a>
                                 </li>
+                                {% endif %}
                             </ul>
                             <div>
                                 <a class="btn btn-outline-dark"
