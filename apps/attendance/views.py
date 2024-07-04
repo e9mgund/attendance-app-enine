@@ -3,7 +3,7 @@ from urllib import request
 from django.shortcuts import redirect, render, HttpResponse, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, View, ListView
-from tomlkit import date
+from apps import attendance
 from project.settings.settings import LOGOUT_URL
 from .models import Employee, LeaveRequest , Attendance , Status
 from django.http import HttpRequest, JsonResponse
@@ -13,6 +13,8 @@ import datetime , calendar
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 import json
+from django.core.exceptions import ObjectDoesNotExist
+from dateutil.relativedelta import relativedelta
 
 # Create your views here.
 
@@ -83,9 +85,12 @@ class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
     template_name = "mark_attendance.html"
     login_url = "/login/"
 
-    def get_context_data(self):
-        employees = Employee.objects.filter(manager=self.request.user)
-        return {"date":datetime.datetime.strftime(datetime.datetime.today(),"%Y-%m-%d"),"employees":employees}
+    def get_context_data(self, **kwargs):
+        members = Employee.objects.filter(manager=self.request.user)
+        status = Status.objects.all()
+        attendance_records = Attendance.objects.filter(employee__in=members.values('user'))
+        context = {"status_options":status,"records":attendance_records,"date":datetime.datetime.strftime(datetime.datetime.today(),"%Y-%m-%d"),"employees":members,"is_manager":True,"is_admin":self.request.user.is_superuser}
+        return context
 
     def post(self,request):
         '''
@@ -95,16 +100,57 @@ class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
         for record in records:
             remark = record['remark'] if record['remark'] != "" else str(record['status'])
             user = User.objects.get(username=record['user'])
-            status = Status.objects.get(status=record['status'].capitalize())
-            update_record,created = Attendance.objects.update_or_create(fordate=attendance_date,employee=user,status=status,remarks=remark)
+            status = Status.objects.get(status=record['status'])
+            try:
+                existing_record = Attendance.objects.filter(employee=user).get(fordate=attendance_date)
+                print("existing",existing_record.status)
+                existing_record.status = status
+                existing_record.remarks = remark
+                existing_record.save()
+            except ObjectDoesNotExist:
+                new_record = Attendance.objects.create(employee=user,fordate=attendance_date,status=status,remarks=remark)
+                new_record.save()
+            # update_record,created = Attendance.objects.update_or_create(fordate=attendance_date,employee=user,status=status,remarks=remark)
             # update_record.save()
-            print("anything",update_record)
+            # print("anything",update_record)
         return redirect(request.path_info)
 
 
 class OverviewView(LoginRequiredMixin,TemplateView) :
     template_name = "manager_overview.html"
     login_url = '/login/'
+
+    def post(self,request,*args,**kwargs) :
+        today = datetime.datetime.today()
+        overview = []
+        month,year = int(request.POST.get('month')),int(request.POST.get('year'))
+        if self.request.user.is_superuser :
+            employees = Employee.objects.all()
+        else:
+            employees = Employee.objects.filter(manager=self.request.user)
+        # print(Attendance.objects.filter(employee=employees[0].user).filter(fordate=today.month))
+        for employee in employees:
+            employee_records = []
+            current_date = datetime.datetime(year,month,1)
+            end_date = datetime.datetime(year,month,calendar.monthrange(year,month)[1])
+            delta = datetime.timedelta(days=1)
+
+            while current_date <= end_date :
+                if Attendance.objects.filter(fordate=current_date).filter(employee=employee.user).exists() :
+                    record = Attendance.objects.filter(fordate=current_date).filter(employee=employee.user)
+                    employee_records.append({"date":record[0].fordate,"status":record[0].status.status})
+                else :
+                    employee_records.append({"date":current_date,"status":"Unknown"})
+                current_date += delta
+            overview.append({employee.user.username:employee_records})
+
+            # for record in Attendance.objects.filter(employee=employee.user) :
+            #     if record.fordate.month == month and record.fordate.year == year :
+            #         employee_records.append({"date":record.fordate,"status":record.status.status})
+            # overview.append({employee.user.username:employee_records})
+        context = {"overview":overview}
+        print(json.dumps(overview,indent=6,default=str))
+        return JsonResponse(overview,safe=False)
 
 
 class LogoutView(TemplateView) :
@@ -128,55 +174,7 @@ class LeaveRequestView(LoginRequiredMixin,TemplateView):
                     j['name'] = str(User.objects.get(pk=j['employee_id']))
                     requests.append(j)
         print(requests)
-        # requests = [
-        #     {
-        #         "id": 2,
-        #         "dtm_created": datetime.datetime(
-        #             2024, 6, 27, 8, 0, 3, 396264, tzinfo=datetime.timezone.utc
-        #         ),
-        #         "dtm_updated": datetime.datetime(
-        #             2024,
-        #             6,
-        #             28,
-        #             7,
-        #             10,
-        #             43,
-        #             208677,
-        #             tzinfo=datetime.timezone.utc,
-        #         ),
-        #         "employee_id": 3,
-        #         "leave_type": "EARNED",
-        #         "start_date": datetime.date(2024, 6, 18),
-        #         "end_date": datetime.date(2024, 6, 27),
-        #         "is_approved": True,
-        #         "name": "Employee1",
-        #     },
-        #     {
-        #         "id": 1,
-        #         "dtm_created": datetime.datetime(
-        #             2024, 6, 27, 7, 58, 6, 770908, tzinfo=datetime.timezone.utc
-        #         ),
-        #         "dtm_updated": datetime.datetime(
-        #             2024, 6, 27, 7, 58, 6, 770927, tzinfo=datetime.timezone.utc
-        #         ),
-        #         "employee_id": 4,
-        #         "leave_type": "LOP",
-        #         "start_date": datetime.date(2024, 6, 27),
-        #         "end_date": datetime.date(2024, 6, 29),
-        #         "is_approved": None,
-        #         "name": "Employee2",
-        #     },
-        # ]
         return {"data": requests[::-1]}
-
-
-# def leave_data(request):
-#     if request.method == "POST" :
-#         print("------------")
-#         print("data",request.__dict__)
-#         print("------------")
-#         return redirect('attendance:leaveRequest')
-
 
 class LeaveRequestAPIView(ListView):
     queryset = LeaveRequest.objects.all()
@@ -201,6 +199,12 @@ def requestLeave(request):
 @require_POST
 def approve_leave(request, leave_id):
     leave_request = get_object_or_404(LeaveRequest, id=leave_id)
+    emp = Employee.objects.get(user=leave_request.employee)
+    if leave_request.leave_type == "EARNED" :
+        emp.earned_leave -= 1
+    elif leave_request.leave_type == "SICK" :
+        emp.sick_leave -= 1
+    emp.save()
     leave_request.is_approved = True
     leave_request.save()
     return redirect("apps.attendance:leaveRequest")

@@ -1,263 +1,242 @@
 {% extends 'base.html' %}
+
 {% block title %}<title>Overview</title>{% endblock %}
+
 {% block content %}
-    <div class="container py-5">
-        <div class="card">
-            <div class="card-header text-center fs-3">
-                <button class="btn">
-                    <i class="bi bi-caret-left-fill"></i>
-                </button>
-                Jan 2024
-                <button class="btn">
-                    <i class="bi bi-caret-right-fill"></i>
-                </button>
+<div class="container py-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-center">
+            <div class="dropdown" id="month-dropdown">
+                <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Month</button>
+                <ul class="dropdown-menu">
+                    <!-- Month options will be populated dynamically -->
+                </ul>
             </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-end pb-2">
-                    <div class="dropdown">
-                        <button class="btn btn-outline-dark dropdown-toggle"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                            <i class="bi bi-funnel-fill"></i> Filters
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="#" class="dropdown-item">Name</a>
-                            </li>
-                        </ul>
-                        <!-- <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              Dropdown button
-                            </button>
-                            <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="#">Action</a></li>
-                              <li><a class="dropdown-item" href="#">Another action</a></li>
-                              <li><a class="dropdown-item" href="#">Something else here</a></li>
-                            </ul>
-                          </div> -->
-                    </div>
-                </div>
-                <table class="table table-bordered table-responsive">
-                    <tr class="text-center">
-                        <td>Employees</td>
-                        <td>
-                            <div>Jan 01</div>
-                            <div>Sun</div>
-                        </td>
-                        <td>
-                            <div>Jan 02</div>
-                            <div>Mon</div>
-                        </td>
-                        <td>
-                            <div>Jan 03</div>
-                            <div>Tue</div>
-                        </td>
-                        <td>
-                            <div>Jan 04</div>
-                            <div>Wed</div>
-                        </td>
-                        <td>
-                            <div>Jan 05</div>
-                            <div>Thu</div>
-                        </td>
-                        <td>
-                            <div>Jan 06</div>
-                            <div>Fri</div>
-                        </td>
-                        <td>
-                            <div>Jan 07</div>
-                            <div>Sat</div>
-                        </td>
-                        <td>
-                            <div>Jan 08</div>
-                            <div>Sun</div>
-                        </td>
-                        <td>
-                            <div>Jan 09</div>
-                            <div>Mon</div>
-                        </td>
-                        <td>
-                            <div>Jan 10</div>
-                            <div>Tue</div>
-                        </td>
-                        <td>
-                            <div>Jan 11</div>
-                            <div>Wed</div>
-                        </td>
-                        <td>
-                            <div>Jan 12</div>
-                            <div>Thu</div>
-                        </td>
-                        <td>
-                            <div>Jan 13</div>
-                            <div>Fri</div>
-                        </td>
-                        <td>
-                            <div>Jan 14</div>
-                            <div>Sat</div>
-                        </td>
-                        <td>
-                            <div>Jan 15</div>
-                            <div>Sun</div>
-                        </td>
+            <div class="dropdown" id="year-dropdown">
+                <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Year</button>
+                <ul class="dropdown-menu">
+                    <!-- Year options will be populated dynamically -->
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-responsive">
+                <thead>
+                    <tr class="text-center" id="table-head">
+                        <th>Employees</th>
+                        <!-- Days of the month headers will be dynamically populated -->
                     </tr>
-                    <tr class="text-center">
-                        <td>Vinay Kumar</td>
-                        <td class="bg-secondary-subtle">P</td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-success border-2">V</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-success border-2">V</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-success border-2">V</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-success border-2">V</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                    </tr>
-                    <tr class="text-center">
-                        <td>Mayur Gund</td>
-                        <td class="bg-secondary-subtle">P</td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-warning border-2">L</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                    </tr>
-                    <tr class="text-center">
-                        <td>Pushpendra Tripathi</td>
-                        <td class="bg-secondary-subtle">P</td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-danger border-2">S</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td>
-                            <div class="border-bottom border-primary border-2">P</div>
-                        </td>
-                        <td class="bg-secondary-subtle">
-                            <div>P</div>
-                        </td>
-                    </tr>
-                </table>
-                <div class="d-flex justify-content-between">
-                    <div class="d-flex justify-content-center">
-                        <div class="border-4 border-start border-primary me-2 ps-1">P - Present</div>
-                        <div class="border-4 border-start border-warning me-2 ps-1">L - Late</div>
-                        <div class="border-4 border-start border-success me-2 ps-1">V - Vacation</div>
-                        <div class="border-4 border-start border-danger me-2 ps-1">S - Sick</div>
-                        <div class="border-4 border-start border-dark ps-1">U - Unknown</div>
-                    </div>
-                    <div>
-                        <!-- <nav aria-label="Page navigation example">
-                        <ul class="d-flex pagination">
-                          <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                          <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                        </ul>
-                      </nav> -->
-                    </div>
+                </thead>
+                <tbody id="attendance-table-body">
+                    <!-- Attendance data rows will be dynamically populated -->
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center" id="pagination">
+                    <!-- Pagination links will be dynamically generated -->
+                </ul>
+            </nav>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-center">
+                    <div class="border-4 border-start border-primary me-2 ps-1">P - Present</div>
+                    <div class="border-4 border-start border-warning me-2 ps-1">L - Late</div>
+                    <div class="border-4 border-start border-success me-2 ps-1">V - Vacation</div>
+                    <div class="border-4 border-start border-danger me-2 ps-1">S - Sick</div>
+                    <div class="border-4 border-start border-dark ps-1">U - Unknown</div>
                 </div>
             </div>
         </div>
     </div>
-{% endblock content %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        var currentPage = 1; // Variable to track current page
+        var rowsPerPage = 15; // Number of rows per page
+
+        // Function to populate months dropdown
+        function populateMonths(year) {
+            var today = new Date();
+            var currentMonth = today.getMonth() + 1; // Month is zero-indexed, so we add 1
+
+            var monthDropdown = $('#month-dropdown ul.dropdown-menu');
+            monthDropdown.empty(); // Clear existing options
+
+            var months = [
+                { value: 1, name: 'January' },
+                { value: 2, name: 'February' },
+                { value: 3, name: 'March' },
+                { value: 4, name: 'April' },
+                { value: 5, name: 'May' },
+                { value: 6, name: 'June' },
+                { value: 7, name: 'July' },
+                { value: 8, name: 'August' },
+                { value: 9, name: 'September' },
+                { value: 10, name: 'October' },
+                { value: 11, name: 'November' },
+                { value: 12, name: 'December' }
+            ];
+
+            if (year == today.getFullYear()) {
+                months = months.slice(0, currentMonth); // Show up to current month for current year
+            }
+
+            months.forEach(function(month) {
+                var li = $('<li><a href="#" class="dropdown-item" value="' + month.value + '">' + month.name + '</a></li>');
+                li.appendTo(monthDropdown);
+            });
+        }
+
+        // Function to populate years dropdown
+        function populateYears() {
+            var today = new Date();
+            var currentYear = today.getFullYear();
+
+            var yearDropdown = $('#year-dropdown ul.dropdown-menu');
+            yearDropdown.empty(); // Clear existing options
+
+            var startYear = 2017; // Starting year
+
+            for (var year = startYear; year <= currentYear; year++) {
+                var li = $('<li><a href="#" class="dropdown-item">' + year + '</a></li>');
+                li.appendTo(yearDropdown);
+            }
+        }
+
+        // Initial population of years dropdown
+        populateYears();
+
+        // Event listener for year dropdown change
+        $('#year-dropdown ul.dropdown-menu').on('click', '.dropdown-item', function(e) {
+            e.preventDefault();
+            var selectedYear = $(this).text().trim();
+            $('#year-dropdown button.dropdown-toggle').text(selectedYear); // Update dropdown button text
+            populateMonths(selectedYear); // Populate months dropdown based on selected year
+
+            // Trigger change event to update active state
+            $('#year-dropdown button.dropdown-toggle').trigger('change');
+        });
+
+        // Event listener for month dropdown change
+        $('#month-dropdown ul.dropdown-menu').on('click', '.dropdown-item', function(e) {
+            e.preventDefault();
+            var selectedMonth = $(this).text().trim();
+            var selectedMonthValue = $(this).attr('value');
+            $('#month-dropdown button.dropdown-toggle').text(selectedMonth); // Update dropdown button text
+
+            // Example AJAX request (replace with actual endpoint and data)
+            $.ajax({
+                url: '{% url "apps.attendance:overview" %}',
+                method: 'POST',
+                data: {
+                    year: $('#year-dropdown button.dropdown-toggle').text().trim(),
+                    month: selectedMonthValue,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    // Clear existing table rows and pagination
+                    $('#attendance-table-body').empty();
+                    $('#pagination').empty();
+
+                    // Calculate total number of days
+                    var totalDays = response.length > 0 ? response[0].length : 0;
+
+                    // Calculate total number of pages
+                    var totalPages = Math.ceil(totalDays / rowsPerPage);
+
+                    // Generate pagination links
+                    for (var i = 1; i <= totalPages; i++) {
+                        var li = $('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
+                        $('#pagination').append(li);
+                    }
+
+                    // Display initial page of attendance data
+                    showPage(1, response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error making AJAX request:', error);
+                    // Handle error
+                }
+            });
+        });
+
+        // Function to display a specific page of attendance data
+        function showPage(page, response) {
+            currentPage = page; // Update current page
+
+            // Calculate start and end indices for the current page
+            var startIndex = (page - 1) * rowsPerPage;
+            var endIndex = startIndex + rowsPerPage;
+
+            // Clear existing table rows
+            $('#attendance-table-body').empty();
+
+            // Iterate over employees' attendance data for the current page
+            for (var i = 0; i < response.length; i++) {
+                var employee = response[i];
+                var employeeName = Object.keys(employee)[0];
+                var records = employee[employeeName].slice(startIndex, endIndex);
+
+                // Create a new row for the employee
+                var employeeRow = $('<tr class="text-center"></tr>');
+                employeeRow.append('<td>' + employeeName + '</td>'); // Employee name column
+
+                // Iterate over the records for each day and add cells to the row
+                records.forEach(function(record) {
+                    var date = record.date.split(' ')[0]; // Extract date without time
+                    var statusClass = getStatusClass(record.status); // Function to get status class based on status ('P', 'L', etc.)
+                    var cell = $('<td class="' + statusClass + '"><div>' + statusText(record.status) + '</div></td>');
+                    employeeRow.append(cell);
+                });
+
+                // Append the row to the table body
+                $('#attendance-table-body').append(employeeRow);
+            }
+        }
+
+        // Event listener for pagination links
+        $('#pagination').on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var page = parseInt($(this).text().trim());
+            showPage(page, response); // Display the selected page
+        });
+
+        // Function to determine CSS class based on attendance status
+        function getStatusClass(status) {
+            switch (status) {
+                case 'Present':
+                    return 'bg-primary text-white';
+                case 'Late':
+                    return 'bg-warning text-dark';
+                case 'Vacation':
+                    return 'bg-success text-white';
+                case 'Sick':
+                    return 'bg-danger text-white';
+                case 'Unknown':
+                    return 'bg-dark text-white';
+                default:
+                    return '';
+            }
+        }
+
+        // Function to display full status text based on status code
+        function statusText(status) {
+            switch (status) {
+                case 'Present':
+                    return 'P';
+                case 'Late':
+                    return 'L';
+                case 'Vacation':
+                    return 'V';
+                case 'Sick':
+                    return 'S';
+                case 'Unknown':
+                    return 'U';
+                default:
+                    return '';
+            }
+        }
+    });
+</script>
+{% endblock %}
+

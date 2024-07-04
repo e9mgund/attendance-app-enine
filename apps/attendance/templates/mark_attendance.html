@@ -20,25 +20,22 @@
                                 id="statusDropdown"
                                 aria-expanded="false">Status</button>
                         <ul class="dropdown-menu" aria-labelledby="statusDropdown">
-                            <li>
-                                <a class="dropdown-item" value="value" href="#" data-status="present">Present</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" value="value" href="#" data-status="late">Late</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" value="value" href="#" data-status="sick">Sick</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" value="value" href="#" data-status="vacation">Vacation</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" value="value" href="#" data-status="travelling">Travelling</a>
-                            </li>
+                            {% for option in status_options %}
+                                <li>
+                                    <a class="dropdown-item"
+                                       value="value"
+                                       href="#"
+                                       data-status="{{ option.status }}">{{ option.status }}</a>
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                     <div>
-                        <input type="date" class="form-control" id="attendanceDate" value="{{date}}" onchange="pastRecords(this.value)">
+                        <input type="date"
+                               class="form-control"
+                               id="attendanceDate"
+                               value="{{ date }}"
+                               onchange="pastRecords(this.value)">
                     </div>
                 </div>
             </div>
@@ -50,38 +47,37 @@
                         </th>
                         <th>Name</th>
                         <th>Remark</th>
-                        <th>Current Status</th>
                     </tr>
                 </thead>
+                {% comment %} <h1>{{employees}}</h1> {% endcomment %}
                 {% if records %}
                     <tbody>
-                        {% for record in records %}
+                        {% for employee in employees %}
                             <tr>
                                 <td>
                                     <input type="checkbox" class="record-checkbox">
                                 </td>
-                                <td>{{ record.employee }}</td>
+                                <td>{{ employee.user }}</td>
                                 <td>
                                     <input type="text" class="form-control" placeholder="{{ record.remark }}">
                                 </td>
-                                <td>{{ record.status }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 {% else %}
                     <tbody>
-                        {% for employee in employees %}
-                        <tr>
-                            <td>
-                                <input type="checkbox" class="record-checkbox">
-                            </td>
-                            <td>{{employee}}</td>
-                            <td>
-                                <input type="text" class="form-control">
-                            </td>
-                            <td>Pending</td>
-                        </tr>
-                        {% endfor %}
+                        {% comment %}{% for employee in employees %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" class="record-checkbox">
+                                </td>
+                                <td>{{ employee }}</td>
+                                <td>
+                                    <input type="text" class="form-control">
+                                </td>
+                                <td>Pending</td>
+                            </tr>
+                        {% endfor %} {% endcomment %}
                     </tbody>
                 {% endif %}
             </table>

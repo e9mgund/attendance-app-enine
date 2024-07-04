@@ -2,7 +2,11 @@
 {% block title %}<title>Manager Dashboard</title>{% endblock %}
 {% block content %}
     <div class="container">
-        <div class="h3 pt-3">{{ weekday }}, {{ date }}</div>
+        <div class="d-flex justify-content-between align-items-center pt-3">
+            <div class="h3">{{ weekday }}, {{ date }}</div>
+            <div><a class="btn btn-sm btn-outline-dark"
+                href="{% url 'apps.attendance:markAttendance' %}">Mark Attendance +</a></div>
+        </div>
         <div class="row">
             <div class="col-lg-8 col-sm-12" id="left">
                 <div class="row py-3" id="top">
@@ -46,7 +50,7 @@
                                 <div>Leave Requests</div>
                                 <div>
                                     <a href="{% url 'apps.attendance:leaveRequest' %}"
-                                       class="link-opacity-100-hover"><i class="bi bi-box-arrow-up-right"></i></a>
+                                       class="link-opacity-100-hover"><i class="bi bi-box-arrow-up-right text-dark"></i></a>
                                 </div>
                             </div>
                             <div class="card-body g-0">
@@ -64,7 +68,7 @@
                                         {% if requests %}
                                             {% for request in requests %}
                                                 <tr>
-                                                    <td>{{ request.id }}</td>
+                                                    <td>{{ forloop.counter }}</td>
                                                     <td>{{ request.name }}</td>
                                                     <td>{{ request.start_date }} to {{ request.end_date }}</td>
                                                     <td class="text-truncate">{{ request.leave_type }}</td>
@@ -108,18 +112,18 @@
                 <div class="col-lg-6 col-sm-12 mb-4">
                     <div class="card">
                         <div class="card-header">Late Today</div>
-                        {% if late_comers %}
                         <div class="card-body">
-                            {% for employee in late_comers %}
-                            <div class="row">
-                                <div class="fs-5">{{employee.employee}}</div>
-                            </div>
-                            <hr>
-                            {% endfor %}
+                            {% if late_comers %}
+                                {% for employee in late_comers %}
+                                    <div class="row">
+                                        <div class="fs-5">{{ employee.employee }}</div>
+                                    </div>
+                                    <hr>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center">No data Available</div>
+                            {% endif %}
                         </div>
-                        {% else %}
-                        <div class="text-center">No data Available</div>
-                        {% endif %}
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
@@ -127,18 +131,18 @@
                         <div class="card-header">Absent</div>
                         <div class="card-body">
                             {% if absent %}
-                            {% for employee in absent %}
-                            <div class="row">
-                                <div>{{employee.employee}}</div>
-                                <div class="d-flex justify-content-between">
-                                    <div>Reason</div>
-                                    <div>{{employee.status}}</div>
-                                </div>
-                            </div>
-                            <hr>
-                            {% endfor %}
+                                {% for employee in absent %}
+                                    <div class="row">
+                                        <div>{{ employee.employee }}</div>
+                                        <div class="d-flex justify-content-between">
+                                            <div>Reason</div>
+                                            <div>{{ employee.status }}</div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                {% endfor %}
                             {% else %}
-                            <div class="text-center">No data Available</div>
+                                <div class="text-center">No data Available</div>
                             {% endif %}
                         </div>
                     </div>
@@ -150,8 +154,7 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <div class="text-center align-self-center">Employees</div>
-                        <a class="btn btn-sm btn-outline-dark"
-                           href="{% url 'apps.attendance:markAttendance' %}">Mark Attendance +</a>
+                        <div><a href="{% url 'apps.attendance:overview' %}" class="btn btn-outline-dark btn-sm">Overview <i class="bi bi-box-arrow-up-right"></i></a></div>
                     </div>
                 </div>
                 <div class="card-body">
