@@ -1,54 +1,72 @@
 {% extends 'base.html' %}
-
 {% block title %}<title>Overview</title>{% endblock %}
-
 {% block content %}
-<div class="container py-5">
-    <div class="card">
-        <div class="card-header d-flex justify-content-center">
-            <div class="dropdown" id="month-dropdown">
-                <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Month</button>
-                <ul class="dropdown-menu">
-                    <!-- Month options will be populated dynamically -->
-                </ul>
-            </div>
-            <div class="dropdown" id="year-dropdown">
-                <button class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Year</button>
-                <ul class="dropdown-menu">
-                    <!-- Year options will be populated dynamically -->
+    <div class="container">
+        <div class="d-flex justify-content-end py-3">
+            <div class="dropdown">
+                <button class="btn btn-outline-dark dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">Export</button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item text-center" href="#"><i class="bi bi-download"></i> Download CSV</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item text-center" href="#"><i class="bi bi-download"></i> Download PDF</a>
+                    </li>
                 </ul>
             </div>
         </div>
-        <div class="card-body table-responsive">
-            <table class="table table-bordered table-responsive">
-                <thead id="attendance-table-head">
-                    <!-- <tr class="text-center" id="table-head"> -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-center">
+                <div class="dropdown" id="month-dropdown">
+                    <button class="btn dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Month</button>
+                    <ul class="dropdown-menu">
+                        <!-- Month options will be populated dynamically -->
+                    </ul>
+                </div>
+                <div class="dropdown" id="year-dropdown">
+                    <button class="btn dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">Year</button>
+                    <ul class="dropdown-menu">
+                        <!-- Year options will be populated dynamically -->
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered border-dark table-responsive">
+                    <thead id="attendance-table-head">
+                        <!-- <tr class="text-center" id="table-head"> -->
                         <!-- <th>Employees</th> -->
                         <!-- Days of the month headers will be dynamically populated -->
-                    <!-- </tr> -->
-                </thead>
-                <tbody id="attendance-table-body">
-                    <!-- Attendance data rows will be dynamically populated -->
-                </tbody>
-            </table>
-            <!-- <div class="text-center" id="pagination">
+                        <!-- </tr> -->
+                    </thead>
+                    <tbody id="attendance-table-body" class="overflow-auto" style="height: 20vh">
+                        <!-- Attendance data rows will be dynamically populated -->
+                    </tbody>
+                </table>
+                <!-- <div class="text-center" id="pagination">
                 <div class="btn btn-sm btn-outline-dark me-2" id="pagination-1" value="1" onclick="requestData(this.value)">1</div>
                 <div class="btn btn-sm btn-outline-dark" id="pagination-2" value="2" onclick="requestData(this.value)">2</div>
             </div> -->
-            <div class="d-flex justify-content-between">
-                <div class="d-flex justify-content-center">
-                    <div class="border-4 border-start border-primary me-2 ps-1">P - Present</div>
-                    <div class="border-4 border-start border-warning me-2 ps-1">L - Late</div>
-                    <div class="border-4 border-start border-success me-2 ps-1">V - Vacation</div>
-                    <div class="border-4 border-start border-danger me-2 ps-1">S - Sick</div>
-                    <div class="border-4 border-start border-dark ps-1">U - Unknown</div>
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-center">
+                        <div class="border-4 border-start border-success me-2 ps-1">P - Present</div>
+                        <div class="border-4 border-start border-warning me-2 ps-1">L - Late</div>
+                        <div class="border-4 border-start border-primary me-2 ps-1">V - Vacation</div>
+                        <div class="border-4 border-start border-info me-2 ps-1">T - Travelling</div>
+                        <div class="border-4 border-start border-danger me-2 ps-1">S - Sick</div>
+                        <div class="border-4 border-start border-dark ps-1">U - Unknown</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-
-<script>
+    <script>
     $(document).ready(function() {
         var currentPage = 1; // Variable to track current page
         var rowsPerPage = 15; // Number of rows per page
@@ -167,7 +185,8 @@
             dateRow.append(`<th>Employees</th>`);
 
             for (var j=1;j<=days;j++){
-                dateRow.append(`<th>${j}</th>`);
+                var day = j.toString().padStart(2,"0");
+                dateRow.append(`<th>${day}</th>`);
             }
             $('#attendance-table-head').append(dateRow);
 
@@ -210,10 +229,12 @@
                     return 'bg-warning text-dark';
                 case 'Vacation':
                     return 'bg-success text-white';
+                case 'Travelling':
+                    return 'bg-info text-dark';
                 case 'Sick':
                     return 'bg-danger text-white';
                 case 'Unknown':
-                    return 'bg-dark text-white';
+                    return 'bg-secondary-subtle text-dark';
                 default:
                     return '';
             }
@@ -228,6 +249,8 @@
                     return 'L';
                 case 'Vacation':
                     return 'V';
+                case 'Travelling':
+                    return 'T';
                 case 'Sick':
                     return 'S';
                 case 'Unknown':
@@ -237,6 +260,5 @@
             }
         }
     });
-</script>
+    </script>
 {% endblock %}
-

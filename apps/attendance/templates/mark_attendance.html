@@ -50,7 +50,6 @@
                     </tr>
                 </thead>
                 {% comment %} <h1>{{employees}}</h1> {% endcomment %}
-                {% if records %}
                     <tbody>
                         {% for employee in employees %}
                             <tr>
@@ -64,22 +63,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                {% else %}
-                    <tbody>
-                        {% comment %}{% for employee in employees %}
-                            <tr>
-                                <td>
-                                    <input type="checkbox" class="record-checkbox">
-                                </td>
-                                <td>{{ employee }}</td>
-                                <td>
-                                    <input type="text" class="form-control">
-                                </td>
-                                <td>Pending</td>
-                            </tr>
-                        {% endfor %} {% endcomment %}
-                    </tbody>
-                {% endif %}
+               
             </table>
         </div>
     </div>

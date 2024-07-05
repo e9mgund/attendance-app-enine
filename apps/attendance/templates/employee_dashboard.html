@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}<title>Dashboard</title>{% endblock %}
 {% block styles %}
-<style>
+    <style>
     h1,h2{
         font-family: "EB Garamond", serif;
         font-weight: medium;
@@ -20,122 +20,133 @@
     .hidden {
         display: none;
     }
-</style>
+    </style>
 {% endblock %}
 {% block content %}
-<div class="container d-flex-column text-center justify-content-center align-items-center gap-5 py-5"
-    style="height: 90vh;">
-    <h1>Welcome, {{user}}!</h1>
-    <!-- leave balance cards -->
-    <div class="row d-flex justify-content-between pt-5 px-3">
-        <div class="col-md-12 card border-success mb-3" style="max-width: 18rem;">
-            <div class="card-body text-success">
-                <h5 class="card-title">Earned (Left)</h5>
-                <p class="card-text fs-2">{{earned}}</p>
+    <div class="container d-flex-column text-center justify-content-center align-items-center gap-5 py-5"
+         style="height: 90vh">
+        <h1>Welcome, {{ user }}!</h1>
+        <!-- leave balance cards -->
+        <div class="row d-flex justify-content-between pt-5 px-3">
+            <div class="col-md-12 card border-success mb-3" style="max-width: 18rem;">
+                <div class="card-body text-success">
+                    <h5 class="card-title">Earned (Left)</h5>
+                    <p class="card-text fs-2">{{ earned }}</p>
+                </div>
+            </div>
+            <div class="col-md-12 card border-primary mb-3" style="max-width: 18rem;">
+                <div class="card-body text-primary">
+                    <h5 class="card-title">Sick (Left)</h5>
+                    <p class="card-text fs-2">{{ sick }}</p>
+                </div>
+            </div>
+            <div class="col-md-12 card border-danger mb-3" style="max-width: 18rem;">
+                <div class="card-body text-danger">
+                    <h5 class="card-title">Unpaid (Taken)</h5>
+                    <p class="card-text fs-2">{{ unpaid }}</p>
+                </div>
             </div>
         </div>
-        <div class="col-md-12 card border-primary mb-3" style="max-width: 18rem;">
-            <div class="card-body text-primary">
-                <h5 class="card-title">Sick (Left)</h5>
-                <p class="card-text fs-2">{{sick}}</p>
-            </div>
-        </div>
-        <div class="col-md-12 card border-danger mb-3" style="max-width: 18rem;">
-            <div class="card-body text-danger">
-                <h5 class="card-title">Unpaid (Taken)</h5>
-                <p class="card-text fs-2">{{unpaid}}</p>
-            </div>
-        </div>
-
-    </div>
-    <h2 class="pt-3 d-flex align-items-center">Here are your records,</h2>
-    <div class="card mt-5">
-        <!-- toggle buttons -->
-        <div class="shadow card-body">
-            <div class="mt-2 mb-5">
-                <div id="buttonGroup" class="btn-group" role="group" aria-label="Button group">
-                    <button type="button" id="attendance-btn" class="btn btn-outline-dark clicked">Attendance
-                        Records</button>
+        <h2 class="pt-3 d-flex align-items-center">Here are your records,</h2>
+        <div class="card mt-5">
+            <!-- toggle buttons -->
+            <div class="shadow card-body">
+                <div class="mt-2 mb-5">
+                    <div id="buttonGroup"
+                         class="btn-group"
+                         role="group"
+                         aria-label="Button group">
+                        <button type="button"
+                                id="attendance-btn"
+                                class="btn btn-outline-dark clicked">
+                            Attendance
+                            Records
+                        </button>
                         {% if not is_admin %}
                             <button type="button" id="requests-btn" class="btn btn-outline-dark">Leave Requests</button>
                         {% endif %}
-                </div>
-            </div>
-            <!-- table -->
-            <div id="attendance-table" class="pt-2 table-responsive">
-                <!-- <input type="date" class="mb-2" style="float: right;"> -->
-                <table class="table border">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Date</th>
-                            <th scope="col">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for employee in employee_records %}
-                        <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td>{{employee.fordate}}</td>
-                            <td>{{employee.status}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <div id="requests-table" class="hidden">
-                <button id="request-form-btn" class="btn btn-outline-success mb-2" style="float:right;">New request
-                    <i class="bi bi-plus"></i></button>
-                {% if num_requests %}
-                <table class="table table-responsive border">
-                    <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Start Date</th>
-                            <th scope="col">End Date</th>
-                            <th scope="col">Leave Type</th>
-                            <th scope="col">Approval status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for request in leave_requests %}
-                        <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td>{{request.start_date}}</td>
-                            <td>{{request.end_date}}</td>
-                            <td>{{request.leave_type}}</td>
-                            <td>{{request.is_approved}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}
-                <h2 class="text-center  ms-5 my-5">You have No records!</h2>
-                {% endif %}
-            </div>
-            <div id="request-form" class="my-5 hidden">
-                <form method="post">
-                    {% csrf_token %}
-                    {% for field in form %}
-                    <div class="fieldWrapper py-2">
-                        <label for="{{field.label}}" class="px-2">{{field.label}}:</label>
-                        {{field}}
-                        {% if field.errors %}
-                        <ul class="errorlist">
-                            {% for error in field.errors %}
-                                <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% endif %}
                     </div>
-                    {% endfor %}
-                    <button id="formsubmit" class="btn btn-success mt-2" type="submit">Save</button>
+                </div>
+                <!-- table -->
+                <div id="attendance-table" class="pt-2 table-responsive">
+                    <!-- <input type="date" class="mb-2" style="float: right;"> -->
+                    {% if employee_records %}
+                        <table class="table border">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for employee in employee_records %}
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ employee.fordate }}</td>
+                                        <td>{{ employee.status }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h2>You have no records !</h2>
+                    {% endif %}
+                </div>
+                <div id="requests-table" class="hidden">
+                    <button id="request-form-btn"
+                            class="btn btn-outline-success mb-2"
+                            style="float:right">
+                        New request
+                        <i class="bi bi-plus"></i>
+                    </button>
+                    {% if num_requests %}
+                        <table class="table table-responsive border">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Start Date</th>
+                                    <th scope="col">End Date</th>
+                                    <th scope="col">Leave Type</th>
+                                    <th scope="col">Approval status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for request in leave_requests %}
+                                    <tr>
+                                        <th scope="row">{{ forloop.counter }}</th>
+                                        <td>{{ request.start_date }}</td>
+                                        <td>{{ request.end_date }}</td>
+                                        <td>{{ request.leave_type }}</td>
+                                        <td>{{ request.is_approved }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <h2 class="text-center  ms-5 my-5">You have No records!</h2>
+                    {% endif %}
+                </div>
+                <div id="request-form" class="my-5 hidden">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="fieldWrapper py-2">
+                                <label for="{{ field.label }}" class="px-2">{{ field.label }}:</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <ul class="errorlist">
+                                        {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <button id="formsubmit" class="btn btn-success mt-2" type="submit">Save</button>
+                    </div>
+                </form>
             </div>
-            </form>
         </div>
     </div>
-</div>
 </div>
 <script>
     $(document).ready(function () {

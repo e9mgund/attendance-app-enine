@@ -11,7 +11,7 @@
             <div class="col-lg-8 col-sm-12" id="left">
                 <div class="row py-3" id="top">
                     <div class="col-lg-3 col-sm-12">
-                        <div class="card text-center mb-2">
+                        <div class="card text-center mb-2 shadow">
                             <div class="card-body">
                                 <div class="text-primary">Present</div>
                                 <div class="fs-2">{{ present }}</div>
@@ -19,7 +19,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-12">
-                        <div class="card text-center mb-2">
+                        <div class="card text-center mb-2 shadow">
                             <div class="card-body">
                                 <div class="text-danger">Absent</div>
                                 <div class="fs-2">{{ abs }}</div>
@@ -27,7 +27,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-12">
-                        <div class="card text-center mb-2">
+                        <div class="card text-center mb-2 shadow">
                             <div class="card-body">
                                 <div class="text-success">Late</div>
                                 <div class="fs-2">{{ late }}</div>
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-12">
-                        <div class="card text-center mb-2">
+                        <div class="card text-center mb-2 shadow">
                             <div class="card-body">
                                 <div class="text-warning">Sick</div>
                                 <div class="fs-2">{{ sick }}</div>
@@ -45,7 +45,7 @@
                 </div>
                 <div class="row py-3" id="middle">
                     <div class="col">
-                        <div class="card">
+                        <div class="card shadow">
                             <div class="card-header d-flex justify-content-between">
                                 <div>Leave Requests</div>
                                 <div>
@@ -54,11 +54,11 @@
                                 </div>
                             </div>
                             <div class="card-body g-0 table-responsive">
-                                <table class="table table-hover">
+                                <table class="table table-hover table-bordered text-center">
                                     <thead>
                                         <tr>
                                             <td>#</td>
-                                            <td>Employee Name</td>
+                                            <td>Name</td>
                                             <td>Duration</td>
                                             <td>Remarks</td>
                                             <td>Actions</td>
@@ -74,10 +74,11 @@
                                                     <td class="text-truncate">{{ request.leave_type }}</td>
                                                     <td>
                                                         {% if request.is_approved is None %}
+                                                        <div class="d-flex justify-content-center">
                                                             <form action="{% url 'apps.attendance:approve_leave' request.id %}"
                                                                   method="post">
                                                                 {% csrf_token %}
-                                                                <button type="submit" class="btn btn-sm btn-outline-success">Approve</button>
+                                                                <button type="submit" class="btn btn-sm btn-outline-success me-2">Approve</button>
                                                             </form>
                                                             <form action="{% url 'apps.attendance:reject_leave' request.id %}"
                                                                   method="post">
@@ -86,11 +87,11 @@
                                                             </form>
                                                         </div>
                                                     {% else %}
-                                                        <div class="col-sm-12 col-lg-2 col-12 d-flex">
+                                                        <div>
                                                             {% if request.is_approved %}
-                                                                <div class="text-success">Approved</div>
+                                                                <div class="text-success text-center">Approved</div>
                                                             {% else %}
-                                                                <div class="text-danger">Rejected</div>
+                                                                <div class="text-danger text-center">Rejected</div>
                                                             {% endif %}
                                                         </div>
                                                     {% endif %}
@@ -110,13 +111,13 @@
             </div>
             <div class="row py-3">
                 <div class="col-lg-6 col-sm-12 mb-4">
-                    <div class="card">
+                    <div class="card shadow">
                         <div class="card-header">Late Today</div>
                         <div class="card-body">
                             {% if late_comers %}
                                 {% for employee in late_comers %}
                                     <div class="row">
-                                        <div class="fs-5">{{ employee.employee }}</div>
+                                        <div class="fs-6">{{ employee.employee }}</div>
                                     </div>
                                     <hr>
                                 {% endfor %}
@@ -127,7 +128,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 col-sm-12">
-                    <div class="card">
+                    <div class="card shadow">
                         <div class="card-header">Absent</div>
                         <div class="card-body">
                             {% if absent %}
@@ -139,7 +140,7 @@
                                             <div>{{ employee.status }}</div>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <hr class="my-3">
                                 {% endfor %}
                             {% else %}
                                 <div class="text-center">No data Available</div>
@@ -150,14 +151,14 @@
             </div>
         </div>
         <div class="col-lg-4 col-sm-12 py-3" id="right">
-            <div class="card">
+            <div class="card shadow">
                 <div class="card-header">
                     <div class="d-flex justify-content-between">
                         <div class="text-center align-self-center">Employees</div>
                         <div><a href="{% url 'apps.attendance:overview' %}" class="btn btn-outline-dark btn-sm">Overview <i class="bi bi-box-arrow-up-right"></i></a></div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body overflow-auto pt-2" style="height: 65vh;">
                     {% for employee in all_employees %}
                         <div class="row">
                             <div class="col">
@@ -168,7 +169,7 @@
                                 </div>
                             </div>
                         </div>
-                        <hr>
+                        <hr class="my-2">
                     {% endfor %}
                 </div>
             </div>

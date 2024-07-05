@@ -1,80 +1,51 @@
-# Qjango - A Qux Django Template
+# ATTENDANCE MANAGEMENT SYSTEM IN DJANGO
 
-## Getting Started
+## Overview
 
+This is an attendance management system implemented as a learning assignment to practice Django. This app utilizes Python and Django as the backend and HTML,CSS,Javascript and Bootstrap for the front end.
+
+### Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- Python (3.6 or higher)
+- Django (3.x recommended)
+
+## Installation
+1. Locate to the Directory in which you want to clone this repo.
+2. Open terminal by,
+    + In Linux systems : By pressing `Ctrl` + `Alt` + `T` keys.
+    + In Windows systems : Right mouse click and choose option ***Open in terminal***.
+3. Inside terminal Type and run :
 ```
-account="quxdev"
-repo="qjango"
-
-git clone https://github.com/${account}/${repo}.git
-cd ${repo}
-
-# Update submodules
-git submodule update --init
-
-# Create virtual environment
-python3 -m venv venv
-
-if [[ $OSTYPE != darwin* ]]; then
-    sed -i '' 's/PS1=\"(venv)/PS1=\"(venv:${repo})/g' venv/bin/activate
-else
-    sed -i 's/PS1=\"(venv)/PS1=\"(venv:${repo})/g' venv/bin/activate
-fi
-
-# Activate virtual environment
-source venv/bin/activate
-
-# Upgrade pip and install packages
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# Migrate models to db.sqlite3
-python manage.py migrate
-
-# Configure project/.env
-dotenv="project/.env"
-if [ ! -f dotenv ]; then
-    touch ${dotenv}
-    secret=$(python manage.py generate_secret_key)
-    echo "DJANGO_SECRET_KEY=\"${secret}\"" >> ${dotenv}
-    echo "DJANGO_DEBUG=true" >> ${dotenv}
-    echo "BOOTSTRAP=bs5" >> ${dotenv}
-fi
-
-# Runserver and test
-python manage.py runserver
+git clone https://github.com/e9mgund/attendance-app-enine.git
 ```
+4. Run ```cd attendance-app-enine``` to go inside the repository.
+5. Update the submodules with ```git submodule update --init```.
 
-## ENVIRONMENT
+6. Ensure that you have created a Virtual Environment , if not then ,
+    + In Linux Systems : Run `/usr/bin/python3 -m venv env_name` statement into the Terminal.
+    + In Windows Systems : You have to install a python module named ***virtualenv***. To install it run the statement `pip install virtualenv` in terminal. Now run `virtualenv env_name` .
+7. Ensure that you have activated the virtual environment, if not then,
+    + In Linux Systems : Run `source env_name/bin/activate` .
+    + In Windows Systems : Run `env_name\Scripts\activate` .
 
-### Django
-
-- `DJANGO_SECRET_KEY`
-- `DJANGO_DEBUG`
-- `DJANGO_ALLOWED_HOSTS`
-- `DJANGO_SITE_ID`
-- `BOOTSTRAP=bs5`
-
-### Database
-
-- `DB_TYPE` = `[sqlite3|mysql]`
-- `DB_NAME`
-- `DB_USERNAME`
-- `DB_PASSWORD`
-- `DB_HOST`
-- `DB_PORT`
-
-### wsgi.py
-
-!! There is no reason to set these by default.
-
-- `DJANGO_SETTINGS_MODULE`
-- `DJANGO_PYTHON_PATH`
-
-## Templates
-
-### `_blank.html`
-
-1. `qux_page_title_extra`: additional classes in heading
-2. `qux_page_title`: page title
-3. `qux_page_content`: page content
+8. Upgrade pip, `pip install --upgrade pip` .
+9. Install all the neccesary requirements by `pip install -r requirements/dev.txt`
+10. migrate the databse using `python3 manage.py migrate`.
+11. Use the script below in the terminal of your editor to create users, first use `python3 manage.py shell`.Then run the script,
+```
+from apps.attendance.models import Employee
+from django.contrib.auth.models import Userfor i in range(1,25):
+     username="Employee"+str(i)
+     a = User.objects.create(username=username,password="abcd@1234",email=username+"@email.com")
+```
+12. migrate the databse using `python3 manage.py makemigrations` and `python3 manage.py migrate`.
+13. Create a superuser to access the admin panel with `python manage.py createsuperuser`.
+14. Start the server with:
+    + In Linux Systems : Run `python3 manage.py runserver` .
+    + In Windows Systems : Run `py manage.py runserver` .
+15. Set up a username, email and password. Go to a new tab, copy the base url and add a "admin/" endpoint to it.The url will look something like this `http:127.0.0.1:8000/admin/`.
+16. Login to the admin panel using the credentials you created, Add employees and status inside the admin panel.
+17. After creating a user, go to the app with the `http:127.0.0.1:8000/attendance/`.
+18. Login with any user credentials.
