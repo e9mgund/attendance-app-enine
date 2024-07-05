@@ -19,23 +19,22 @@
                 </ul>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body table-responsive">
             <table class="table table-bordered table-responsive">
-                <thead>
-                    <tr class="text-center" id="table-head">
-                        <th>Employees</th>
+                <thead id="attendance-table-head">
+                    <!-- <tr class="text-center" id="table-head"> -->
+                        <!-- <th>Employees</th> -->
                         <!-- Days of the month headers will be dynamically populated -->
-                    </tr>
+                    <!-- </tr> -->
                 </thead>
                 <tbody id="attendance-table-body">
                     <!-- Attendance data rows will be dynamically populated -->
                 </tbody>
             </table>
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center" id="pagination">
-                    <!-- Pagination links will be dynamically generated -->
-                </ul>
-            </nav>
+            <!-- <div class="text-center" id="pagination">
+                <div class="btn btn-sm btn-outline-dark me-2" id="pagination-1" value="1" onclick="requestData(this.value)">1</div>
+                <div class="btn btn-sm btn-outline-dark" id="pagination-2" value="2" onclick="requestData(this.value)">2</div>
+            </div> -->
             <div class="d-flex justify-content-between">
                 <div class="d-flex justify-content-center">
                     <div class="border-4 border-start border-primary me-2 ps-1">P - Present</div>
@@ -131,27 +130,17 @@
                 data: {
                     year: $('#year-dropdown button.dropdown-toggle').text().trim(),
                     month: selectedMonthValue,
+                    page: "1",
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function(response) {
                     // Clear existing table rows and pagination
                     $('#attendance-table-body').empty();
-                    $('#pagination').empty();
 
                     // Calculate total number of days
-                    var totalDays = response.length > 0 ? response[0].length : 0;
-
-                    // Calculate total number of pages
-                    var totalPages = Math.ceil(totalDays / rowsPerPage);
-
-                    // Generate pagination links
-                    for (var i = 1; i <= totalPages; i++) {
-                        var li = $('<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>');
-                        $('#pagination').append(li);
-                    }
 
                     // Display initial page of attendance data
-                    showPage(1, response);
+                    showPage(response);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error making AJAX request:', error);
@@ -160,22 +149,33 @@
             });
         });
 
-        // Function to display a specific page of attendance data
-        function showPage(page, response) {
-            currentPage = page; // Update current page
+        // function requestData(value) {
+        //     console.log("my",value);
+        // }
 
-            // Calculate start and end indices for the current page
-            var startIndex = (page - 1) * rowsPerPage;
-            var endIndex = startIndex + rowsPerPage;
+        // Function to display a specific page of attendance data
+        function showPage(response) {
 
             // Clear existing table rows
             $('#attendance-table-body').empty();
+            $('#attendance-table-head').empty();
+
+            emp_name = Object.keys(response[0])[0];
+            days = response[0][emp_name].length;
+
+            var dateRow = $(`<tr class="text-center" id="table-head"></tr>`);
+            dateRow.append(`<th>Employees</th>`);
+
+            for (var j=1;j<=days;j++){
+                dateRow.append(`<th>${j}</th>`);
+            }
+            $('#attendance-table-head').append(dateRow);
 
             // Iterate over employees' attendance data for the current page
             for (var i = 0; i < response.length; i++) {
                 var employee = response[i];
                 var employeeName = Object.keys(employee)[0];
-                var records = employee[employeeName].slice(startIndex, endIndex);
+                var records = employee[employeeName];
 
                 // Create a new row for the employee
                 var employeeRow = $('<tr class="text-center"></tr>');

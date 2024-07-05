@@ -7,10 +7,11 @@ app_name = "apps.attendance"
 
 urlpatterns = [
     path(
-        "",
+        "managerdash/",
         views.DashboardView.as_view(),
         name="home",
     ),
+    path('',views.EmployeeDashboard.as_view(),name="emp_dash"),
     path("requests/", views.LeaveRequestView.as_view(), name="leaveRequest"),
     path(
         "requestAPI/",

@@ -64,6 +64,36 @@
                 </div>
             </div>
         </div>
+        <!-- <div class="card">
+            <div class="card-header">Leave Requests</div>
+            <div class="card-body table-responsive">
+                <table class="table table-hover table-bordered text-center">
+                    <thead>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Leave Type</th>
+                        <th>Actions</th>
+                    </thead>
+                    <tbody>
+                        {% if data %}
+                        {% for record in data %}
+                        <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{record.name}}</td>
+                        <td>{{record.start_date}}</td>
+                        <td>{{record.end_date}}</td>
+                        <td>{{record.leave_type}}</td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr><td>No Data Available</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div> -->
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {

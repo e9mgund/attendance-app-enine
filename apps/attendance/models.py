@@ -19,6 +19,7 @@ class Employee(QuxModel):
         start = fomonth(fordate, 0)
         end = eomonth(fordate, 0)
         # find records between start and end
+        
         # calculate by record and aggregate
         # return results
         return 0

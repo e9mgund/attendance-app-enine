@@ -39,10 +39,12 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
                             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                                {% if not is_admin %}
                                 <li class="nav-item">
-                                    <a class="nav-link active" aria-current="page" href="{% url 'apps.attendance:home' %}">Home</a>
+                                    <a class="nav-link active" aria-current="page" href="{% url 'apps.attendance:emp_dash' %}">Home</a>
                                 </li>
-                                {% if is_manager %}
+                                {% endif %}
+                                {% if is_manager and not is_admin %}
                                 <li class="nav-item">
                                     <a class="nav-link" href="{% url 'apps.attendance:home' %}">Manager Dashboard</a>
                                 </li>

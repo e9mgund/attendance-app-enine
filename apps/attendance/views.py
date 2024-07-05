@@ -15,8 +15,59 @@ from django.views.decorators.http import require_POST
 import json
 from django.core.exceptions import ObjectDoesNotExist
 from dateutil.relativedelta import relativedelta
+from .forms import LeaveRequestForm
 
 # Create your views here.
+
+
+class EmployeeDashboard(LoginRequiredMixin,TemplateView):
+    template_name = "employee_dashboard.html"
+    login_url = "/login/"
+    def calculate_leaves(self):
+        approved_requests = LeaveRequest.objects.filter(employee=self.request.user).filter(is_approved=True)
+        sick_requests = approved_requests.filter(leave_type="SICK")
+        earned_requests = approved_requests.filter(leave_type="EARNED")  
+        unpaid_requests = approved_requests.filter(leave_type="LOP")
+        unpaid = sum([(record.end_date - record.start_date).days + 1 for record in unpaid_requests])
+        return unpaid
+    
+    def get(self,request) :
+        if self.request.user.is_superuser :
+            return redirect('apps.attendance:managerdash')
+    def get_context_data(self,**kwargs):
+        user= self.request.user
+        is_manager = user.manager.exists()
+        employee = Employee.objects.get(user=user)
+        sick,earned,unpaid = employee.sick_leave,employee.earned_leave,self.calculate_leaves()
+        print("--------------------------------------------------------------")
+        print("SICK,EARNED,UNPAID:",sick,earned,unpaid)
+        print("--------------------------------------------------------------")
+        # if earned==15:
+        #     unpaid += earned - 15
+        #     earned = 15
+        # # else:
+        #     earned = 15- earned
+        # if sick>9:
+        #     unpaid += sick - 9
+        #     sick = 0
+        # else:
+        #     sick = 9 - sick
+
+        leave_requests = LeaveRequest.objects.filter(employee=self.request.user).order_by("-start_date")
+        context = {"form":LeaveRequestForm,"leave_requests":leave_requests,"num_requests":len(leave_requests)!=0,"employee_records":Attendance.objects.filter(employee=user).order_by("-fordate"),"is_manager":is_manager,"is_admin":user.is_superuser,"sick":sick,"earned":earned,"unpaid":abs(unpaid),"user":str(user).capitalize()}
+        # print(context)
+        return context
+    def post(self,request):
+        leave_type,start_date,end_date = request.POST.get("leave_type"),request.POST.get("start_date"),request.POST.get("end_date")
+        new_request = LeaveRequest.objects.create(
+            employee=self.request.user,
+            leave_type=leave_type,
+            start_date=start_date,
+            end_date=end_date,
+            is_approved=None
+        )
+        new_request.save()
+        return redirect(request.path_info)
 
 
 class DashboardView(LoginRequiredMixin, TemplateView):
@@ -24,6 +75,8 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     login_url = "/login/"
 
     def get_context_data(self):
+        # if not self.request.user.is_superuser or not self.request.user.is_staff :
+        #     return redirect('apps.attendance:emp_dash')
         today = datetime.datetime.now()
         late_comers = []
         absent = []
@@ -110,15 +163,16 @@ class MarkAttendanceView(LoginRequiredMixin,TemplateView) :
             except ObjectDoesNotExist:
                 new_record = Attendance.objects.create(employee=user,fordate=attendance_date,status=status,remarks=remark)
                 new_record.save()
-            # update_record,created = Attendance.objects.update_or_create(fordate=attendance_date,employee=user,status=status,remarks=remark)
-            # update_record.save()
-            # print("anything",update_record)
         return redirect(request.path_info)
 
 
 class OverviewView(LoginRequiredMixin,TemplateView) :
     template_name = "manager_overview.html"
     login_url = '/login/'
+
+    def get_context_data(self, **kwargs: Any) :
+        context= {"is_manager":self.request.user.is_staff,"is_admin":self.request.user.is_superuser}
+        return context
 
     def post(self,request,*args,**kwargs) :
         today = datetime.datetime.today()
@@ -156,7 +210,7 @@ class OverviewView(LoginRequiredMixin,TemplateView) :
 class LogoutView(TemplateView) :
     def get(self, request):
         logout(request)
-        return redirect('apps.attendance:home')
+        return redirect('apps.attendance:emp_dash')
 
 
 class LeaveRequestView(LoginRequiredMixin,TemplateView):
