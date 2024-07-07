@@ -334,7 +334,6 @@ class LeaveRequestView(LoginRequiredMixin, TemplateView):
                 if i["user_id"] == j["employee_id"]:
                     j["name"] = str(User.objects.get(pk=j["employee_id"]))
                     requests.append(j)
-        print(requests)
         return {
             "data": requests,
             "is_manager": self.request.user.is_staff,
@@ -365,11 +364,25 @@ def requestLeave(request):
 @require_POST
 def approve_leave(request, leave_id):
     leave_request = get_object_or_404(LeaveRequest, id=leave_id)
+    current_day = leave_request.start_date
+    delta = datetime.timedelta(days=1)
+    deductible_days = 0
+    while current_day <= leave_request.end_date :
+        weekday = calendar.weekday(current_day.year,current_day.month,current_day.day)
+        if weekday != 5 and weekday != 6 :
+            deductible_days += 1
+        current_day += delta
     emp = Employee.objects.get(user=leave_request.employee)
     if leave_request.leave_type == "EARNED":
-        emp.earned_leave -= 1
+        if emp.earned_leave <= deductible_days:
+            emp.earned_leave = 0
+        else:
+            emp.earned_leave -= deductible_days
     elif leave_request.leave_type == "SICK":
-        emp.sick_leave -= 1
+        if emp.sick_leave <= deductible_days:
+            emp.sick_leave = 0
+        else:
+            emp.sick_leave -= deductible_days
     emp.save()
     leave_request.is_approved = True
     leave_request.save()
