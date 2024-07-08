@@ -1,5 +1,8 @@
 from typing import Any
 import json
+#
+import csv
+#
 import datetime
 import calendar
 from django.shortcuts import redirect, get_object_or_404
@@ -305,6 +308,17 @@ class OverviewView(LoginRequiredMixin, TemplateView):
                     )
                 current_date += delta
             overview.append({employee.user.username: employee_records})
+        print("----------------------------------------------------")
+        # print(overview[1])
+        with open('test.csv','a') as fp:
+            writer = csv.writer(fp)
+            headers = ['Employees'] + [str(i['date'].day).zfill(2) for i in overview[0][list(overview[0].keys())[0]]]
+            writer.writerow(headers)
+            for i in overview :
+                writer.writerow(i.keys())
+            # writer.writerows(zip(*i.values()))
+        print("done")
+        print("----------------------------------------------------")
         context = {"overview": overview}
         return JsonResponse(overview, safe=False)
 

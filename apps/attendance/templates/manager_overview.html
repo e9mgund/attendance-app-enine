@@ -10,10 +10,10 @@
                         aria-expanded="false">Export</button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item text-center" href="#"><i class="bi bi-download"></i> Download CSV</a>
+                        <a class="dropdown-item text-center" href="#" id="download-csv"><i class="bi bi-download"></i> Download CSV</a>
                     </li>
                     <li>
-                        <a class="dropdown-item text-center" href="#"><i class="bi bi-download"></i> Download PDF</a>
+                        <a class="dropdown-item text-center" href="#" id="download-pdf"><i class="bi bi-download"></i> Download PDF</a>
                     </li>
                 </ul>
             </div>
@@ -24,7 +24,7 @@
                     <button class="btn dropdown-toggle"
                             data-bs-toggle="dropdown"
                             aria-expanded="false">Month</button>
-                    <ul class="dropdown-menu">
+                    <ul class="dropdown-menu" id="dropdown-month">
                         <!-- Month options will be populated dynamically -->
                     </ul>
                 </div>
@@ -155,8 +155,6 @@
                     // Clear existing table rows and pagination
                     $('#attendance-table-body').empty();
 
-                    // Calculate total number of days
-
                     // Display initial page of attendance data
                     showPage(response);
                 },
@@ -167,9 +165,16 @@
             });
         });
 
-        // function requestData(value) {
-        //     console.log("my",value);
-        // }
+        $('#download-pdf').on('click',function() {
+            console.log("pdf");
+        });
+
+
+        $('#download-csv').on('click',function() {
+            var year = $('#year-dropdown button.dropdown-toggle').text().trim();
+            var month = $('#month-dropdown button.dropdown-toggle').text();
+            console.log("------------",$(`#dropdown-month`).children()[0].firstChild);
+        });
 
         // Function to display a specific page of attendance data
         function showPage(response) {
