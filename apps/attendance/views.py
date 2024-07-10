@@ -1,10 +1,11 @@
+from textwrap import indent
 from typing import Any
 import json
-#
-import csv
-#
+import io
+import base64
 import datetime
 import calendar
+import matplotlib.pyplot as plt
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView, ListView
 from django.core.exceptions import ObjectDoesNotExist
@@ -50,7 +51,7 @@ class EmployeeDashboard(LoginRequiredMixin, TemplateView):
     #         return redirect('apps.attendance:managerdash')
     def get_context_data(self, **kwargs):
         user = self.request.user
-        if not user.is_superuser :
+        if not user.is_superuser:
             is_manager = user.manager.exists()
             employee = Employee.objects.get(user=user)
             sick, earned, unpaid = (
@@ -58,9 +59,13 @@ class EmployeeDashboard(LoginRequiredMixin, TemplateView):
                 employee.earned_leave,
                 self.calculate_leaves(),
             )
-            print("--------------------------------------------------------------")
+            print(
+                "--------------------------------------------------------------"
+            )
             print("SICK,EARNED,UNPAID:", sick, earned, unpaid)
-            print("--------------------------------------------------------------")
+            print(
+                "--------------------------------------------------------------"
+            )
             # if earned==15:
             #     unpaid += earned - 15
             #     earned = 15
@@ -90,7 +95,11 @@ class EmployeeDashboard(LoginRequiredMixin, TemplateView):
                 "user": str(user).capitalize(),
             }
         else:
-            context = {"is_manager":user.is_staff,"is_admin":user.is_superuser,"user":str(user).capitalize()}
+            context = {
+                "is_manager": user.is_staff,
+                "is_admin": user.is_superuser,
+                "user": str(user).capitalize(),
+            }
         return context
 
     def post(self, request):
@@ -308,18 +317,6 @@ class OverviewView(LoginRequiredMixin, TemplateView):
                     )
                 current_date += delta
             overview.append({employee.user.username: employee_records})
-        print("----------------------------------------------------")
-        # print(overview[1])
-        with open('test.csv','a') as fp:
-            writer = csv.writer(fp)
-            headers = ['Employees'] + [str(i['date'].day).zfill(2) for i in overview[0][list(overview[0].keys())[0]]]
-            writer.writerow(headers)
-            for i in overview :
-                writer.writerow(i.keys())
-            # writer.writerows(zip(*i.values()))
-        print("done")
-        print("----------------------------------------------------")
-        context = {"overview": overview}
         return JsonResponse(overview, safe=False)
 
 
@@ -381,9 +378,11 @@ def approve_leave(request, leave_id):
     current_day = leave_request.start_date
     delta = datetime.timedelta(days=1)
     deductible_days = 0
-    while current_day <= leave_request.end_date :
-        weekday = calendar.weekday(current_day.year,current_day.month,current_day.day)
-        if weekday != 5 and weekday != 6 :
+    while current_day <= leave_request.end_date:
+        weekday = calendar.weekday(
+            current_day.year, current_day.month, current_day.day
+        )
+        if weekday != 5 and weekday != 6:
             deductible_days += 1
         current_day += delta
     emp = Employee.objects.get(user=leave_request.employee)
@@ -409,3 +408,30 @@ def reject_leave(request, leave_id):
     leave_request.is_approved = False
     leave_request.save()
     return redirect("apps.attendance:leaveRequest")
+
+@require_POST
+def generate_graph(request):
+    plt.figure(figsize=(10, 5))
+        
+    # Generate your graph (this is just an example)
+    x = [1, 2, 3, 4, 5]
+    y = [2, 4, 6, 8, 10]
+
+    plt.plot(x, y)
+    plt.title('Sample Graph')
+    plt.xlabel('X axis')
+    plt.ylabel('Y axis')
+
+    # Save the plot to a bytes buffer
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    
+    # Encode the image to base64 string
+    image_png = buffer.getvalue()
+    graph = base64.b64encode(image_png).decode('utf-8')
+
+    # Clear the current figure
+    plt.clf()
+
+    return JsonResponse({"data":graph})

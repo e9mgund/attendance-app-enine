@@ -38,4 +38,5 @@ urlpatterns = [
     ),
     path("logout/", views.LogoutView.as_view(), name="logout"),
     path("markattendance/",views.MarkAttendanceView.as_view(),name="markAttendance"),
+    path("report/",views.generate_graph,name="report"),
 ]

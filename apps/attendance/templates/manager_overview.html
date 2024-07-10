@@ -4,7 +4,8 @@
     <div class="container">
         <div class="d-flex justify-content-end py-3">
             <div class="dropdown">
-                <button class="btn btn-outline-dark dropdown-toggle"
+                <button id="export-btn"
+                        class="btn btn-outline-dark dropdown-toggle disabled"
                         type="button"
                         data-bs-toggle="dropdown"
                         aria-expanded="false">Export</button>
@@ -65,8 +66,16 @@
                 </div>
             </div>
         </div>
+        <div id="plot" class="my-3"></div>
     </div>
-    <script>
+    <!-- html2canvas library -->
+    <!-- <script type="module"> import * as jspdf from 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm' </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <!-- d3js library -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@observablehq/plot@0.6"></script>
+    <script type="module">
+    import * as jspdf from 'https://cdn.jsdelivr.net/npm/jspdf@2.5.1/+esm';
     $(document).ready(function() {
         var currentPage = 1; // Variable to track current page
         var rowsPerPage = 15; // Number of rows per page
@@ -141,6 +150,8 @@
             var selectedMonthValue = $(this).attr('value');
             $('#month-dropdown button.dropdown-toggle').text(selectedMonth); // Update dropdown button text
 
+            $('#export-btn').removeClass('disabled');
+
             // Example AJAX request (replace with actual endpoint and data)
             $.ajax({
                 url: '{% url "apps.attendance:overview" %}',
@@ -165,16 +176,96 @@
             });
         });
 
-        $('#download-pdf').on('click',function() {
-            console.log("pdf");
+        $('#download-pdf').on('click',function(e) {
+            e.preventDefault();
+            downloadPDF();
         });
 
 
-        $('#download-csv').on('click',function() {
+        $('#download-csv').on('click',function(e) {
+            e.preventDefault();
+            var months = {"January":"1","February":"2","March":"3","April":"4","May":"5","June":"6","July":"7","August":"8","September":"9","October":"10","November":"11","December":"12"}
             var year = $('#year-dropdown button.dropdown-toggle').text().trim();
             var month = $('#month-dropdown button.dropdown-toggle').text();
-            console.log("------------",$(`#dropdown-month`).children()[0].firstChild);
+
+            $.ajax({
+                url: '{% url "apps.attendance:overview" %}',
+                method: 'POST',
+                data: {
+                    year: year,
+                    month:months[month],
+                    csrfmiddlewaretoken: '{{csrf_token}}'
+                },
+                success: function(response) {
+                    downloadCSV(response,year,month);
+                }
+            })
         });
+
+        function downloadPDF() {
+            $.ajax({
+                url: '{% url "apps.attendance:report" %}',
+                method: 'POST',
+                data: {
+                    csrfmiddlewaretoken: '{{csrf_token}}'
+                },
+                success: function(response) {
+                    if (response.data) {
+                        var img = $('<img>');
+                        img.attr('src', 'data:image/png;base64,' + response.data);
+                        $('#plot').empty().append(img);
+
+                        var doc = new jspdf.jsPDF();
+                        doc.addImage(response.data,'PNG',0,0,190,100);
+                        doc.text('Attendance Report', 105, 120, null, null, 'center');
+                        doc.save('attendance_report.pdf');
+                    } else {
+                        console.log("error");
+                    }
+                }
+            })
+        };
+
+        function downloadCSV(data,year,month) {
+            let ref = {"Present":"P","Vacation":"V","Sick":"S","Late":"L","Travelling":"T","Unknown":"U"};
+            var csvData = [];
+            var headers = ['Employees'];
+            var days = data[0][Object.keys(data[0])[0]].length;
+            for (var i=1;i<=days;i++) {
+                headers.push(i.toString().padStart(2,"0"));
+            };
+            csvData.push(['','','','','Month:',month,'Year:',year,'','','','']);
+            csvData.push(headers);
+
+            for (let i in data) {
+                var key = Object.keys(data[i])[0];
+                var row = [key];
+                for (let j in data[i][key]) {
+                    row.push(ref[data[i][key][j].status]);
+                }
+                csvData.push(row);
+            }
+            csvData.push([]);
+            csvData.push(['Present: ','P']);
+            csvData.push(['Late: ','L']);
+            csvData.push(['Vacation: ','V']);
+            csvData.push(['Travelling: ','T']);
+            csvData.push(['Sick: ','S']);
+            csvData.push(['Unknown: ','U']);
+            csvData = csvData.join("\n");
+
+            const blob = new Blob([csvData],{type:'text/csv;charset=utf-8;'});
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download',`${year}_${month}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+        };
 
         // Function to display a specific page of attendance data
         function showPage(response) {
@@ -183,8 +274,8 @@
             $('#attendance-table-body').empty();
             $('#attendance-table-head').empty();
 
-            emp_name = Object.keys(response[0])[0];
-            days = response[0][emp_name].length;
+            var emp_name = Object.keys(response[0])[0];
+            var days = response[0][emp_name].length;
 
             var dateRow = $(`<tr class="text-center" id="table-head"></tr>`);
             dateRow.append(`<th>Employees</th>`);
@@ -216,7 +307,7 @@
                 // Append the row to the table body
                 $('#attendance-table-body').append(employeeRow);
             }
-        }
+        };
 
         // Event listener for pagination links
         $('#pagination').on('click', '.page-link', function(e) {
@@ -229,11 +320,11 @@
         function getStatusClass(status) {
             switch (status) {
                 case 'Present':
-                    return 'bg-primary text-white';
+                    return 'bg-success text-white';
                 case 'Late':
                     return 'bg-warning text-dark';
                 case 'Vacation':
-                    return 'bg-success text-white';
+                    return 'bg-primary text-white';
                 case 'Travelling':
                     return 'bg-info text-dark';
                 case 'Sick':
