@@ -203,11 +203,17 @@
         });
 
         function downloadPDF() {
+            var months = {"January":"1","February":"2","March":"3","April":"4","May":"5","June":"6","July":"7","August":"8","September":"9","October":"10","November":"11","December":"12"}
+            var year = $('#year-dropdown button.dropdown-toggle').text().trim();
+            var month = $('#month-dropdown button.dropdown-toggle').text();
+
             $.ajax({
                 url: '{% url "apps.attendance:report" %}',
                 method: 'POST',
                 data: {
-                    csrfmiddlewaretoken: '{{csrf_token}}'
+                    year: year,
+                    month: months[month],
+                    csrfmiddlewaretoken: '{{csrf_token}}',
                 },
                 success: function(response) {
                     if (response.data) {
@@ -216,9 +222,10 @@
                         $('#plot').empty().append(img);
 
                         var doc = new jspdf.jsPDF();
-                        doc.addImage(response.data,'PNG',0,0,190,100);
-                        doc.text('Attendance Report', 105, 120, null, null, 'center');
+                        doc.addImage(response.data,'PNG',0,0,190,200);
+                        // doc.text('Attendance Report', 105, 120, null, null, 'center');
                         doc.save('attendance_report.pdf');
+                        document.getElementById('plot').style.display = 'none';
                     } else {
                         console.log("error");
                     }

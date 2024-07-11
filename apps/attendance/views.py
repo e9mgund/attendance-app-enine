@@ -6,6 +6,7 @@ import base64
 import datetime
 import calendar
 import matplotlib.pyplot as plt
+import pandas as pd
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import TemplateView, ListView
 from django.core.exceptions import ObjectDoesNotExist
@@ -411,27 +412,67 @@ def reject_leave(request, leave_id):
 
 @require_POST
 def generate_graph(request):
-    plt.figure(figsize=(10, 5))
-        
-    # Generate your graph (this is just an example)
-    x = [1, 2, 3, 4, 5]
-    y = [2, 4, 6, 8, 10]
+    plt.figure(figsize=(20, 20))
+    year,month = int(request.POST.get('year')),int(request.POST.get('month'))
+    records = []
 
-    plt.plot(x, y)
-    plt.title('Sample Graph')
-    plt.xlabel('X axis')
-    plt.ylabel('Y axis')
-
-    # Save the plot to a bytes buffer
-    buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
+    if request.user.is_superuser :
+        employees = Employee.objects.all()
+    else:
+        employees = Employee.objects.filter(manager=request.user)
     
-    # Encode the image to base64 string
+    start_date = datetime.datetime(year=year,month=month,day=1)
+    end_date = datetime.datetime(year=year,month=month,day=calendar.monthrange(year,month)[1])
+
+    while start_date <= end_date :
+        record = [start_date.strftime("%-d"),0,0,0,0,0,0]
+        emp_records = Attendance.objects.filter(fordate=start_date)
+        if not emp_records :
+            record[6] = len(employees)
+        else :
+            for emp in employees:
+                emp_record = emp_records.filter(employee=emp.user)
+                if not emp_record :
+                    record[6] += 1
+                else :
+                    if emp_record[0].status.status == "Present" :
+                        record[1] += 1
+                    elif emp_record[0].status.status == "Late" :
+                        record[2] += 1
+                    elif emp_record[0].status.status == "Sick" :
+                        record[3] += 1
+                    elif emp_record[0].status.status == "Travelling" :
+                        record[4] += 1
+                    else :
+                        record[5] += 1
+        records.append(record)
+        start_date += datetime.timedelta(days=1)
+    
+    df = pd.DataFrame(records,columns=["Date","Present","Late","Sick","Travelling","Vacation","Unknown"])
+
+    total_present = df['Present'].sum()
+    total_late = df['Late'].sum()
+    total_sick = df['Sick'].sum()
+    total_travelling = df['Travelling'].sum()
+    total_vacation = df['Vacation'].sum()
+    total_unknown = df['Unknown'].sum()
+
+    labels = ['Present','Late','Sick','Travelling','Vacation','Unknown']
+    sizes = [total_present,total_late,total_sick,total_travelling,total_vacation,total_unknown]
+    colors = ['#198754','#ffc107','#dc3545','#0dcaf0','#0d6efd','#212529']
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140,pctdistance=1.25,labeldistance=.6)
+    plt.title('Attendance Summary')
+
+    buffer = io.BytesIO()
+    plt.savefig(buffer, format='png',dpi=200)
+    buffer.seek(0)
+
     image_png = buffer.getvalue()
     graph = base64.b64encode(image_png).decode('utf-8')
 
-    # Clear the current figure
     plt.clf()
+    plt.close()
 
     return JsonResponse({"data":graph})
