@@ -152,7 +152,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             for i in members:
                 for j in list(LeaveRequest.objects.values()):
                     if i["user_id"] == j["employee_id"]:
-                        j["name"] = str(User.objects.get(pk=j["employee_id"]))
+                        j["name"] = (
+                            User.objects.get(pk=j["employee_id"]).first_name
+                            + " "
+                            + User.objects.get(pk=j["employee_id"]).last_name
+                        )
                         requests.append(j)
         else:
             total_employees = Employee.objects.filter(
@@ -190,7 +194,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
             for i in members:
                 for j in list(LeaveRequest.objects.values()):
                     if i["user_id"] == j["employee_id"]:
-                        j["name"] = str(User.objects.get(pk=j["employee_id"]))
+                        j["name"] = (
+                            User.objects.get(pk=j["employee_id"]).first_name
+                            + " "
+                            + User.objects.get(pk=j["employee_id"]).last_name
+                        )
                         requests.append(j)
         return {
             "weekday": today.strftime("%A"),
@@ -317,7 +325,7 @@ class OverviewView(LoginRequiredMixin, TemplateView):
                         {"date": current_date, "status": "Unknown"}
                     )
                 current_date += delta
-            overview.append({employee.user.username: employee_records})
+            overview.append({f'{employee.user.first_name} {employee.user.last_name}': employee_records})
         return JsonResponse(overview, safe=False)
 
 
@@ -410,69 +418,98 @@ def reject_leave(request, leave_id):
     leave_request.save()
     return redirect("apps.attendance:leaveRequest")
 
+
 @require_POST
 def generate_graph(request):
     plt.figure(figsize=(20, 20))
-    year,month = int(request.POST.get('year')),int(request.POST.get('month'))
+    year, month = int(request.POST.get("year")), int(request.POST.get("month"))
     records = []
 
-    if request.user.is_superuser :
+    if request.user.is_superuser:
         employees = Employee.objects.all()
     else:
         employees = Employee.objects.filter(manager=request.user)
-    
-    start_date = datetime.datetime(year=year,month=month,day=1)
-    end_date = datetime.datetime(year=year,month=month,day=calendar.monthrange(year,month)[1])
 
-    while start_date <= end_date :
-        record = [start_date.strftime("%-d"),0,0,0,0,0,0]
+    start_date = datetime.datetime(year=year, month=month, day=1)
+    end_date = datetime.datetime(
+        year=year, month=month, day=calendar.monthrange(year, month)[1]
+    )
+
+    while start_date <= end_date:
+        record = [start_date.strftime("%-d"), 0, 0, 0, 0, 0, 0]
         emp_records = Attendance.objects.filter(fordate=start_date)
-        if not emp_records :
+        if not emp_records:
             record[6] = len(employees)
-        else :
+        else:
             for emp in employees:
                 emp_record = emp_records.filter(employee=emp.user)
-                if not emp_record :
+                if not emp_record:
                     record[6] += 1
-                else :
-                    if emp_record[0].status.status == "Present" :
+                else:
+                    if emp_record[0].status.status == "Present":
                         record[1] += 1
-                    elif emp_record[0].status.status == "Late" :
+                    elif emp_record[0].status.status == "Late":
                         record[2] += 1
-                    elif emp_record[0].status.status == "Sick" :
+                    elif emp_record[0].status.status == "Sick":
                         record[3] += 1
-                    elif emp_record[0].status.status == "Travelling" :
+                    elif emp_record[0].status.status == "Travelling":
                         record[4] += 1
-                    else :
+                    else:
                         record[5] += 1
         records.append(record)
         start_date += datetime.timedelta(days=1)
-    
-    df = pd.DataFrame(records,columns=["Date","Present","Late","Sick","Travelling","Vacation","Unknown"])
 
-    total_present = df['Present'].sum()
-    total_late = df['Late'].sum()
-    total_sick = df['Sick'].sum()
-    total_travelling = df['Travelling'].sum()
-    total_vacation = df['Vacation'].sum()
-    total_unknown = df['Unknown'].sum()
+    df = pd.DataFrame(
+        records,
+        columns=[
+            "Date",
+            "Present",
+            "Late",
+            "Sick",
+            "Travelling",
+            "Vacation",
+            "Unknown",
+        ],
+    )
 
-    labels = ['Present','Late','Sick','Travelling','Vacation','Unknown']
-    sizes = [total_present,total_late,total_sick,total_travelling,total_vacation,total_unknown]
-    colors = ['#198754','#ffc107','#dc3545','#0dcaf0','#0d6efd','#212529']
+    total_present = df["Present"].sum()
+    total_late = df["Late"].sum()
+    total_sick = df["Sick"].sum()
+    total_travelling = df["Travelling"].sum()
+    total_vacation = df["Vacation"].sum()
+    total_unknown = df["Unknown"].sum()
+
+    labels = ["Present", "Late", "Sick", "Travelling", "Vacation", "Unknown"]
+    sizes = [
+        total_present,
+        total_late,
+        total_sick,
+        total_travelling,
+        total_vacation,
+        total_unknown,
+    ]
+    colors = ["#198754", "#ffc107", "#dc3545", "#0dcaf0", "#0d6efd", "#212529"]
 
     plt.figure(figsize=(8, 8))
-    plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140,pctdistance=1.25,labeldistance=.6)
-    plt.title('Attendance Summary')
+    plt.pie(
+        sizes,
+        labels=labels,
+        colors=colors,
+        autopct="%1.1f%%",
+        startangle=140,
+        pctdistance=1.25,
+        labeldistance=0.6,
+    )
+    plt.title("Attendance Summary")
 
     buffer = io.BytesIO()
-    plt.savefig(buffer, format='png',dpi=200)
+    plt.savefig(buffer, format="png", dpi=200)
     buffer.seek(0)
 
     image_png = buffer.getvalue()
-    graph = base64.b64encode(image_png).decode('utf-8')
+    graph = base64.b64encode(image_png).decode("utf-8")
 
     plt.clf()
     plt.close()
 
-    return JsonResponse({"data":graph})
+    return JsonResponse({"data": graph})

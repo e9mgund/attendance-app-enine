@@ -162,7 +162,7 @@
                     {% for employee in all_employees %}
                         <div class="row">
                             <div class="col">
-                                <div class="fs-5">{{ employee }}</div>
+                                <div class="fs-5">{{ employee.user.first_name }} {{ employee.user.last_name }}</div>
                                 <div class="d-flex justify-content-between">
                                     <div>Leaves Remaining</div>
                                     <div class="text-dark">{{ employee.earned_leave }}</div>
